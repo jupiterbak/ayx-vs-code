@@ -145,8 +145,8 @@ export class AYXWorkspace extends vscode.TreeItem{
 	}
 
 	iconPath = {
-		light: path.join(__filename, '..', '..', 'resources', 'icons', 'light', 'symbol-namespace.svg'),
-		dark: path.join(__filename, '..', '..', 'resources', 'icons', 'dark', 'symbol-namespace.svg')
+		light: path.join(__filename, '..', '..', 'resources', 'icons', 'light', 'alteryx_icon_light.svg'),
+		dark: path.join(__filename, '..', '..', 'resources', 'icons', 'dark', 'alteryx_icon_dark.svg')
 	};
 
 	contextValue = 'workspace';

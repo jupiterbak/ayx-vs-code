@@ -18,7 +18,7 @@
   "contributes": {
     "commands": [
       {
-				"command": "ayxWorkspaces.refreshWorkspace",
+				"command": "ayxWorkspaces.refresh",
 				"title": "Refresh",
 				"icon": {
 					"light": "resources/icons/light/refresh.svg",
@@ -26,7 +26,7 @@
 				}
 			},
       {
-				"command": "ayxWorkspaces.configureWorkspace",
+				"command": "ayxWorkspaces.configure",
 				"title": "Configure",
 				"icon": {
 					"light": "resources/icons/light/gear.svg",
@@ -39,6 +39,14 @@
         "icon": {
 					"light": "resources/icons/light/info.svg",
 					"dark": "resources/icons/dark/info.svg"
+				}
+			},
+      {
+				"command": "ayxWorkspaces.editWorkspace",
+				"title": "Edit",
+				"icon": {
+					"light": "resources/icons/light/edit.svg",
+					"dark": "resources/icons/dark/edit.svg"
 				}
 			},
 			{
@@ -111,27 +119,27 @@
     "menus": {
 			"view/title": [
         {
-					"command": "ayxWorkspaces.addEntry",
-					"when": "view == ayxWorkspaces",
-          "group": "navigation"
-				},
-        {
-					"command": "ayxWorkspaces.configureWorkspace",
-					"when": "view == ayxWorkspaces",
-          "group": "navigation"
-				},
-				{
-					"command": "ayxWorkspaces.refreshWorkspace",
+					"command": "ayxWorkspaces.refresh",
 					"when": "view == ayxWorkspaces",
 					"group": "navigation"
 				},
         {
-					"command": "ayxWorkspaces.infoWorkspace",
+					"command": "ayxWorkspaces.configure",
 					"when": "view == ayxWorkspaces",
           "group": "navigation"
 				}
 			],
 			"view/item/context": [
+        {
+					"command": "ayxWorkspaces.infoWorkspace",
+					"when": "view == ayxWorkspaces && viewItem == workspace",
+          "group": "inline"
+				},
+        {
+					"command": "ayxWorkspaces.editWorkspace",
+					"when": "view == ayxWorkspaces && viewItem == workspace",
+					"group": "inline"
+				},
 				{
 					"command": "ayxWorkspaces.infoEntry",
 					"when": "view == ayxWorkspaces && viewItem == tool",
@@ -145,6 +153,11 @@
 				{
 					"command": "ayxWorkspaces.deleteEntry",
 					"when": "view == ayxWorkspaces && viewItem == tool"
+				},
+        {
+					"command": "ayxWorkspaces.addEntry",
+					"when": "view == ayxWorkspaces && viewItem == workspace",
+          "group": "inline"
 				}
 			]
 		},

@@ -3,7 +3,6 @@
 import * as vscode from 'vscode';
 
 import { AyxWorkspaceProvider, Tool } from './ayxWorkspaces';
-import { FileExplorer } from './fileExplorer';
 import { TestView } from './testView';
 
 
@@ -22,9 +21,11 @@ export async function activate(context: vscode.ExtensionContext) {
 	// Samples of `window.registerTreeDataProvider`
 	const ayxWorkspacesProvider = new AyxWorkspaceProvider(rootPath);
 	vscode.window.registerTreeDataProvider('ayxWorkspaces', ayxWorkspacesProvider);
-	vscode.commands.registerCommand('ayxWorkspaces.refreshWorkspace', () => ayxWorkspacesProvider.refresh());
-	vscode.commands.registerCommand('ayxWorkspaces.configureWorkspace', () => vscode.window.showInformationMessage(`Successfully called refresh workspace.`));
+	vscode.commands.registerCommand('ayxWorkspaces.refresh', () => ayxWorkspacesProvider.refresh());
+	vscode.commands.registerCommand('ayxWorkspaces.configure', () => vscode.window.showInformationMessage(`Successfully called configure.`));
+	
 	vscode.commands.registerCommand('ayxWorkspaces.infoWorkspace', () => vscode.window.showInformationMessage(`Successfully called info workspace.`));
+	vscode.commands.registerCommand('ayxWorkspaces.editWorkspace', () => vscode.window.showInformationMessage(`Successfully called edit workspace.`));
 
 	vscode.commands.registerCommand('extension.openPackageOnNpm', moduleName => vscode.commands.executeCommand('vscode.open', vscode.Uri.parse(`https://www.npmjs.com/package/${moduleName}`)));
 	vscode.commands.registerCommand('ayxWorkspaces.addEntry', () => vscode.window.showInformationMessage(`Successfully called add entry.`));
