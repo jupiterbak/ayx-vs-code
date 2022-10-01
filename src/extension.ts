@@ -2,7 +2,7 @@
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
 
-import { AyxWorkspaceProvider, Tool } from './ayxWorkspaces';
+import { AyxWorkspaceProvider, AyxTool, AyxToolUI, AyxToolBackend } from './ayxWorkspaces';
 import { TestView } from './testView';
 
 
@@ -29,11 +29,13 @@ export async function activate(context: vscode.ExtensionContext) {
 
 	vscode.commands.registerCommand('extension.openPackageOnNpm', moduleName => vscode.commands.executeCommand('vscode.open', vscode.Uri.parse(`https://www.npmjs.com/package/${moduleName}`)));
 	vscode.commands.registerCommand('ayxWorkspaces.addEntry', () => vscode.window.showInformationMessage(`Successfully called add entry.`));
-	vscode.commands.registerCommand('ayxWorkspaces.editEntry', (node: Tool) => vscode.window.showInformationMessage(`Successfully called edit entry on ${node.label}.`));
-	vscode.commands.registerCommand('ayxWorkspaces.infoEntry', (node: Tool) => vscode.window.showInformationMessage(`Successfully called info entry on ${node.label}.`));
-	vscode.commands.registerCommand('ayxWorkspaces.deleteEntry', (node: Tool) => vscode.window.showInformationMessage(`Successfully called delete entry on ${node.label}.`));
-
-
+	vscode.commands.registerCommand('ayxWorkspaces.editEntry', (node: AyxTool) => vscode.window.showInformationMessage(`Successfully called edit entry on ${node.label}.`));
+	vscode.commands.registerCommand('ayxWorkspaces.infoEntry', (node: AyxTool) => vscode.window.showInformationMessage(`Successfully called info entry on ${node.label}.`));
+	vscode.commands.registerCommand('ayxWorkspaces.deleteEntry', (node: AyxTool) => vscode.window.showInformationMessage(`Successfully called delete entry on ${node.label}.`));
+	vscode.commands.registerCommand('ayxWorkspaces.debugEntryUI', (node: AyxToolUI) => vscode.window.showInformationMessage(`Successfully called debug entry ui on ${node.label}.`));
+	vscode.commands.registerCommand('ayxWorkspaces.debugEntryBackend', (node: AyxToolBackend) => vscode.window.showInformationMessage(`Successfully called debug entry backend on ${node.label}.`));
+	
+	
 	// Test View
 	new TestView(context);
 

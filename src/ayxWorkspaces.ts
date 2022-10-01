@@ -1,11 +1,12 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 
-export class AyxWorkspaceProvider implements vscode.TreeDataProvider<AYXWorkspace> {
+export class AyxWorkspaceProvider implements vscode.TreeDataProvider<vscode.TreeItem> {
 
-	private _onDidChangeTreeData: vscode.EventEmitter<AYXWorkspace | undefined | void> = new vscode.EventEmitter<AYXWorkspace | undefined | void>();
-	readonly onDidChangeTreeData: vscode.Event<AYXWorkspace | undefined | void> = this._onDidChangeTreeData.event;
+	private _onDidChangeTreeData: vscode.EventEmitter<vscode.TreeItem | undefined | void> = new vscode.EventEmitter<vscode.TreeItem | undefined | void>();
+	readonly onDidChangeTreeData: vscode.Event<vscode.TreeItem | undefined | void> = this._onDidChangeTreeData.event;
 
 	constructor(private workspaceRoot: string | undefined) {
 	}
@@ -18,18 +19,111 @@ export class AyxWorkspaceProvider implements vscode.TreeDataProvider<AYXWorkspac
 		return element;
 	}
 
-	getChildren(element?: AYXWorkspace): Thenable<AYXWorkspace[]> {
+	getChildren(element?: vscode.TreeItem): Thenable<vscode.TreeItem[]>{
 		if (!this.workspaceRoot) {
 			vscode.window.showInformationMessage('No alteryx workspace in empty folder');
 			return Promise.resolve([]);
 		}
 
 		if (element) {
+			const context = element.contextValue;
+			if(context === "workspace"){
+				const nodes = this.getAyxToolNodes((element as AYXWorkspace).config);
+				return Promise.resolve(nodes);
+			}else if(context === "tool"){
+				const config = (element as AyxTool).config as AYXToolConfiguration;
+				return Promise.resolve([
+					new AyxToolConfig(config.configuration, config.configuration && Object.keys(config.configuration).length ? vscode.TreeItemCollapsibleState.Collapsed : vscode.TreeItemCollapsibleState.None),
+					new AyxToolBackend(config.backend, config.backend && Object.keys(config.backend).length ? vscode.TreeItemCollapsibleState.Collapsed : vscode.TreeItemCollapsibleState.None),
+					new AyxToolUI(config.ui, vscode.TreeItemCollapsibleState.Collapsed)					
+				]);
+			}else if(context === "tool_configuration"){
+				const config = (element as AyxToolConfig).config as AYXToolConfigurationConfig;
+				return Promise.resolve(
+					[
+						{
+							label: `long_name: '${config.long_name}'`,
+							tooltip: `long_name: '${config.long_name}'`,
+							collapsibleState: vscode.TreeItemCollapsibleState.None,
+							iconPath: {
+								light: path.join(__filename, '..', '..', 'resources', 'icons', 'light', 'tag.svg'),
+								dark: path.join(__filename, '..', '..', 'resources', 'icons', 'dark', 'tag.svg')
+							}							
+						},
+						{
+							label: `version: '${config.version}'`,
+							tooltip: `version: '${config.version}'`,
+							collapsibleState: vscode.TreeItemCollapsibleState.None,
+							iconPath: {
+								light: path.join(__filename, '..', '..', 'resources', 'icons', 'light', 'tag.svg'),
+								dark: path.join(__filename, '..', '..', 'resources', 'icons', 'dark', 'tag.svg')
+							}							
+						},
+						{
+							label: `help_url: '${config.help_url}'`,
+							tooltip: `help_url: '${config.help_url}'`,
+							collapsibleState: vscode.TreeItemCollapsibleState.None,
+							iconPath: {
+								light: path.join(__filename, '..', '..', 'resources', 'icons', 'light', 'tag.svg'),
+								dark: path.join(__filename, '..', '..', 'resources', 'icons', 'dark', 'tag.svg')
+							}							
+						},
+						{
+							label: `icon_path: '${config.icon_path}'`,
+							tooltip: `icon_path: '${config.icon_path}'`,
+							collapsibleState: vscode.TreeItemCollapsibleState.None,
+							iconPath: {
+								light: path.join(__filename, '..', '..', 'resources', 'icons', 'light', 'tag.svg'),
+								dark: path.join(__filename, '..', '..', 'resources', 'icons', 'dark', 'tag.svg')
+							}							
+						},
+						{
+							label: `inputs (${Object.keys(config.input_anchors).length})`,
+							tooltip: `inputs (${Object.keys(config.input_anchors).length})`,
+							collapsibleState: vscode.TreeItemCollapsibleState.Collapsed
+						},
+						{
+							label: `output (${Object.keys(config.output_anchors).length})`,
+							tooltip: `output (${Object.keys(config.output_anchors).length})`,
+							collapsibleState: vscode.TreeItemCollapsibleState.Collapsed
+						},
+					]
+				);
+			}else if(context === "tool_backend"){
+				const config = (element as AyxToolBackend).config as AYXToolBackendConfiguration;
+				return Promise.resolve(
+					[
+						{
+							label: `tool_module: '${config.tool_module}'`,
+							tooltip: `tool_module: '${config.tool_module}'`,
+							collapsibleState: vscode.TreeItemCollapsibleState.None,
+							iconPath: {
+								light: path.join(__filename, '..', '..', 'resources', 'icons', 'light', 'tag.svg'),
+								dark: path.join(__filename, '..', '..', 'resources', 'icons', 'dark', 'tag.svg')
+							}
+						},
+						{
+							label: `tool_class_name: '${config.tool_class_name}'`,
+							tooltip: `tool_class_name: '${config.tool_class_name}`,
+							collapsibleState: vscode.TreeItemCollapsibleState.None,
+							iconPath: {
+								light: path.join(__filename, '..', '..', 'resources', 'icons', 'light', 'tag.svg'),
+								dark: path.join(__filename, '..', '..', 'resources', 'icons', 'dark', 'tag.svg')
+							}
+						}
+					]
+				);
+			}else if(context === "tool_ui"){
+				const config = (element as AyxToolBackend).config as AYXToolBackendConfiguration;
+				return Promise.resolve(
+					[]
+				);
+			}
 			return Promise.resolve([]);
 		} else {
 			const packageJsonPath = path.join(this.workspaceRoot, 'ayx_workspace.json');
 			if (this.pathExists(packageJsonPath)) {
-				return Promise.resolve(this.getAyxToolsSettingsJson(packageJsonPath));
+				return Promise.resolve(this.getAyxWorkspaceSettingsJson(packageJsonPath));
 			} else {
 				vscode.window.showInformationMessage('Workspace has no ayx_workspace.json');
 				return Promise.resolve([]);
@@ -38,42 +132,10 @@ export class AyxWorkspaceProvider implements vscode.TreeDataProvider<AYXWorkspac
 
 	}
 
-	// /**
-	//  * Given the path to ayx_workspace.json, read all its ayx tools.
-	//  */
-	// private getAyxToolsSettingsJson(packageJsonPath: string): Tool[] {
-	// 	const workspaceRoot = this.workspaceRoot;
-	// 	if (this.pathExists(packageJsonPath) && workspaceRoot) {
-	// 		const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'));
-
-	// 		const toDep = (moduleName: string, version: string): Tool => {
-	// 			if (this.pathExists(path.join(workspaceRoot, 'node_modules', moduleName))) {
-	// 				return new Tool(moduleName, version, vscode.TreeItemCollapsibleState.Collapsed);
-	// 			} else {
-	// 				return new Tool(moduleName, version, vscode.TreeItemCollapsibleState.None, {
-	// 					command: 'extension.openPackageOnNpm',
-	// 					title: '',
-	// 					arguments: [moduleName]
-	// 				});
-	// 			}
-	// 		};
-
-	// 		const deps = packageJson.dependencies
-	// 			? Object.keys(packageJson.dependencies).map(dep => toDep(dep, packageJson.dependencies[dep]))
-	// 			: [];
-	// 		const devDeps = packageJson.devDependencies
-	// 			? Object.keys(packageJson.devDependencies).map(dep => toDep(dep, packageJson.devDependencies[dep]))
-	// 			: [];
-	// 		return deps.concat(devDeps);
-	// 	} else {
-	// 		return [];
-	// 	}
-	// }
-
 	/**
 	 * Given the path to ayx_workspace.json, read all its ayx tools.
 	 */
-	private getAyxToolsSettingsJson(packageJsonPath: string): AYXWorkspace[] {
+	private getAyxWorkspaceSettingsJson(packageJsonPath: string): AYXWorkspace[] {
 		const workspaceRoot = this.workspaceRoot;
 		const workspaces = [];
 		if (this.pathExists(packageJsonPath) && workspaceRoot) {
@@ -85,52 +147,147 @@ export class AyxWorkspaceProvider implements vscode.TreeDataProvider<AYXWorkspac
 		}
 	}
 
+	private getAyxToolNodes(workspace: AYXWorkspaceConfiguration): AyxTool[] {
+		const tools = Object.keys(workspace.tools).map(key => new AyxTool(workspace.tools[key], vscode.TreeItemCollapsibleState.Expanded));
+		return tools;
+	}
+
 	private pathExists(p: string): boolean {
 		try {
 			fs.accessSync(p);
 		} catch (err) {
 			return false;
 		}
-
 		return true;
 	}
 }
 
-export class Tool extends vscode.TreeItem {
+export interface AYXToolUIConfiguration {}
+
+export class AyxToolUI extends vscode.TreeItem {
 
 	constructor(
-		public readonly label: string,
-		private readonly version: string,
+		public config: AYXToolUIConfiguration,
 		public readonly collapsibleState: vscode.TreeItemCollapsibleState,
 		public readonly command?: vscode.Command
 	) {
-		super(label, collapsibleState);
-
-		this.tooltip = `${this.label}-${this.version}`;
-		this.description = this.version;
+		super('ui', collapsibleState);
+		this.tooltip = `UI Configuration`;
 	}
 
 	iconPath = {
-		light: path.join(__filename, '..', '..', 'resources', 'light', 'Tool.svg'),
-		dark: path.join(__filename, '..', '..', 'resources', 'dark', 'Tool.svg')
+		light: path.join(__filename, '..', '..', 'resources', 'icons', 'light', 'browser.svg'),
+		dark: path.join(__filename, '..', '..', 'resources', 'icons', 'dark', 'browser.svg')
+	};
+
+	contextValue = 'tool_ui';
+}
+
+export interface AYXToolBackendConfiguration {	
+		tool_module: string,
+		tool_class_name: string
+}
+
+export class AyxToolBackend extends vscode.TreeItem {
+
+	constructor(
+		public config: AYXToolBackendConfiguration,
+		public readonly collapsibleState: vscode.TreeItemCollapsibleState,
+		public readonly command?: vscode.Command
+	) {
+		super('backend', collapsibleState);
+		this.tooltip = `Backend configuration`;
+	}
+
+	iconPath = {
+		light: path.join(__filename, '..', '..', 'resources', 'icons', 'light', 'server.svg'),
+		dark: path.join(__filename, '..', '..', 'resources', 'icons', 'dark', 'server.svg')
+	};
+
+	contextValue = 'tool_backend';
+}
+
+export interface AYXToolConfigurationConfig {	
+	long_name: string,
+	description: string,
+	version: string,
+	search_tags: [],
+	help_url: string,
+	icon_path: string,
+	input_anchors: any,
+	output_anchors: any
+}
+
+export class AyxToolConfig extends vscode.TreeItem {
+
+	constructor(
+		public config: AYXToolConfigurationConfig,
+		public readonly collapsibleState: vscode.TreeItemCollapsibleState,
+		public readonly command?: vscode.Command
+	) {
+		super('configuration', collapsibleState);
+		this.tooltip = `AyxToolConfigration for ${this.config.long_name}`;
+	}
+
+	iconPath = {
+		light: path.join(__filename, '..', '..', 'resources', 'icons', 'light', 'file.svg'),
+		dark: path.join(__filename, '..', '..', 'resources', 'icons', 'dark', 'file.svg')
+	};
+
+	contextValue = 'tool_configuration';
+}
+
+export interface AYXToolConfiguration {	
+	backend: {
+		tool_module: string,
+		tool_class_name: string
+	},
+	ui: {},
+	configuration: {
+		long_name: string,
+		description: string,
+		version: string,
+		search_tags: [],
+		help_url: string,
+		icon_path: string,
+		input_anchors: any,
+		output_anchors: any
+	}
+}
+
+export class AyxTool extends vscode.TreeItem {
+
+	constructor(
+		public config: AYXToolConfiguration,
+		public readonly collapsibleState: vscode.TreeItemCollapsibleState,
+		public readonly command?: vscode.Command
+	) {
+		super(config.configuration.long_name, collapsibleState);
+		this.tooltip = `AyxTool: ${this.config.configuration.long_name}`;
+	}
+
+	iconPath = {
+		light: path.join(__filename, '..', '..', 'resources', 'icons', 'light', 'package.svg'),
+		dark: path.join(__filename, '..', '..', 'resources', 'icons', 'dark', 'package.svg')
 	};
 
 	contextValue = 'tool';
 }
 
+
 export interface AYXWorkspaceConfiguration {
 	name: string,
-	toolCategory: string,
-	packageIconPath: string,
+	tool_category: string,
+	package_icon_path: string,
 	author: string,
 	company: string,
 	copyright: string,
 	description: string,
-	ayxCliVersion: string,
-	backendLanguage: string,
-	backendLanguageSettings: any,
-	toolVersion: string,
-	tools: Array<any>;
+	ayx_cli_version: string,
+	backend_language: string,
+	backend_language_settings: any,
+	tool_version: string,
+	tools: any;
 }
 
 export class AYXWorkspace extends vscode.TreeItem{
@@ -141,12 +298,12 @@ export class AYXWorkspace extends vscode.TreeItem{
 		public readonly command?: vscode.Command
 	) {
 		super(`${config.name}`, collapsibleState);
-		this.tooltip = `${this.config.name}-${this.config.toolVersion}`;
+		this.tooltip = `Workspace: ${this.config.name}-${this.config.tool_version}`;
 	}
 
 	iconPath = {
-		light: path.join(__filename, '..', '..', 'resources', 'icons', 'light', 'alteryx_icon_light.svg'),
-		dark: path.join(__filename, '..', '..', 'resources', 'icons', 'dark', 'alteryx_icon_dark.svg')
+		light: path.join(__filename, '..', '..', 'resources', 'icons', 'light', 'folder-opened.svg'),
+		dark: path.join(__filename, '..', '..', 'resources', 'icons', 'dark', 'folder-opened.svg')
 	};
 
 	contextValue = 'workspace';

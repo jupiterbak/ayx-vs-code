@@ -37,8 +37,8 @@
 				"command": "ayxWorkspaces.infoWorkspace",
 				"title": "Info",
         "icon": {
-					"light": "resources/icons/light/info.svg",
-					"dark": "resources/icons/dark/info.svg"
+					"light": "resources/icons/light/eye.svg",
+					"dark": "resources/icons/dark/eye.svg"
 				}
 			},
       {
@@ -65,14 +65,6 @@
 					"dark": "resources/icons/dark/refresh.svg"
 				}
 			},
-      {
-				"command": "ayxWorkspaces.infoEntry",
-				"title": "Info",
-        "icon": {
-					"light": "resources/icons/light/info.svg",
-					"dark": "resources/icons/dark/info.svg"
-				}
-			},
 			{
 				"command": "ayxWorkspaces.editEntry",
 				"title": "Edit",
@@ -83,7 +75,29 @@
 			},
 			{
 				"command": "ayxWorkspaces.deleteEntry",
-				"title": "Delete"
+				"title": "Delete",
+        "icon": {
+					"light": "resources/icons/light/trash.svg",
+					"dark": "resources/icons/dark/trash.svg"
+				}
+			},
+      {
+				"command": "ayxWorkspaces.debugEntryUI",
+				"title": "Debug",
+				"icon": {
+					"light": "resources/icons/light/debug-console.svg",
+					"dark": "resources/icons/dark/debug-console.svg"
+				}
+			},
+
+
+      {
+				"command": "ayxWorkspaces.debugEntryBackend",
+				"title": "Debug",
+				"icon": {
+					"light": "resources/icons/light/debug-console.svg",
+					"dark": "resources/icons/dark/debug-console.svg"
+				}
 			},
 			{
 				"command": "testView.reveal",
@@ -99,7 +113,7 @@
         {
           "id": "ayx-explorer",
           "title": "Alteryx",
-          "icon": "resources/media/alteryx_icon_white_256.png"
+          "icon": "resources/media/alteryx_icon_dark_256.png"
         }
       ]
     },
@@ -112,7 +126,7 @@
         },
         {
           "id": "testView",
-          "name": "Test"
+          "name": "Help & Feedback"
         }
       ]
     },
@@ -140,11 +154,6 @@
 					"when": "view == ayxWorkspaces && viewItem == workspace",
 					"group": "inline"
 				},
-				{
-					"command": "ayxWorkspaces.infoEntry",
-					"when": "view == ayxWorkspaces && viewItem == tool",
-					"group": "inline"
-				},
         {
 					"command": "ayxWorkspaces.editEntry",
 					"when": "view == ayxWorkspaces && viewItem == tool",
@@ -152,7 +161,18 @@
 				},
 				{
 					"command": "ayxWorkspaces.deleteEntry",
-					"when": "view == ayxWorkspaces && viewItem == tool"
+					"when": "view == ayxWorkspaces && viewItem == tool",
+          "group": "inline"
+				},
+        {
+					"command": "ayxWorkspaces.debugEntryUI",
+					"when": "view == ayxWorkspaces && viewItem == tool_ui",
+          "group": "inline"
+				},
+        {
+					"command": "ayxWorkspaces.debugEntryBackend",
+					"when": "view == ayxWorkspaces && viewItem == tool_backend",
+          "group": "inline"
 				},
         {
 					"command": "ayxWorkspaces.addEntry",
