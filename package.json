@@ -10,14 +10,153 @@
     "Other"
   ],
   "activationEvents": [
+    "onView:ayxWorkspaces",
+		"onView:testView",
     "onCommand:ayx.helloWorld"
   ],
   "main": "./dist/extension.js",
   "contributes": {
     "commands": [
       {
-        "command": "ayx.helloWorld",
-        "title": "Hello World"
+				"command": "ayxWorkspaces.refreshWorkspace",
+				"title": "Refresh",
+				"icon": {
+					"light": "resources/icons/light/refresh.svg",
+					"dark": "resources/icons/dark/refresh.svg"
+				}
+			},
+      {
+				"command": "ayxWorkspaces.configureWorkspace",
+				"title": "Configure",
+				"icon": {
+					"light": "resources/icons/light/gear.svg",
+					"dark": "resources/icons/dark/gear.svg"
+				}
+			},
+      {
+				"command": "ayxWorkspaces.infoWorkspace",
+				"title": "Info",
+        "icon": {
+					"light": "resources/icons/light/info.svg",
+					"dark": "resources/icons/dark/info.svg"
+				}
+			},
+			{
+				"command": "ayxWorkspaces.addEntry",
+				"title": "Add",
+        "icon": {
+					"light": "resources/icons/light/add.svg",
+					"dark": "resources/icons/dark/add.svg"
+				}
+			},
+      {
+				"command": "ayxWorkspaces.refreshEntry",
+				"title": "Refresh",
+				"icon": {
+					"light": "resources/icons/light/refresh.svg",
+					"dark": "resources/icons/dark/refresh.svg"
+				}
+			},
+      {
+				"command": "ayxWorkspaces.infoEntry",
+				"title": "Info",
+        "icon": {
+					"light": "resources/icons/light/info.svg",
+					"dark": "resources/icons/dark/info.svg"
+				}
+			},
+			{
+				"command": "ayxWorkspaces.editEntry",
+				"title": "Edit",
+				"icon": {
+					"light": "resources/icons/light/edit.svg",
+					"dark": "resources/icons/dark/edit.svg"
+				}
+			},
+			{
+				"command": "ayxWorkspaces.deleteEntry",
+				"title": "Delete"
+			},
+			{
+				"command": "testView.reveal",
+				"title": "Test View: Reveal"
+			},
+			{
+				"command": "testView.changeTitle",
+				"title": "Test View: Change Title"
+			}
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "ayx-explorer",
+          "title": "Alteryx",
+          "icon": "resources/media/alteryx_icon_white_256.png"
+        }
+      ]
+    },
+    "views": {
+      "ayx-explorer": [
+        {
+          "id": "ayxWorkspaces",
+          "name": "Alteryx SDK Workspace",
+          "contextualTitle": "AYX Explorer"
+        },
+        {
+          "id": "testView",
+          "name": "Test"
+        }
+      ]
+    },
+    "menus": {
+			"view/title": [
+        {
+					"command": "ayxWorkspaces.addEntry",
+					"when": "view == ayxWorkspaces",
+          "group": "navigation"
+				},
+        {
+					"command": "ayxWorkspaces.configureWorkspace",
+					"when": "view == ayxWorkspaces",
+          "group": "navigation"
+				},
+				{
+					"command": "ayxWorkspaces.refreshWorkspace",
+					"when": "view == ayxWorkspaces",
+					"group": "navigation"
+				},
+        {
+					"command": "ayxWorkspaces.infoWorkspace",
+					"when": "view == ayxWorkspaces",
+          "group": "navigation"
+				}
+			],
+			"view/item/context": [
+				{
+					"command": "ayxWorkspaces.infoEntry",
+					"when": "view == ayxWorkspaces && viewItem == tool",
+					"group": "inline"
+				},
+        {
+					"command": "ayxWorkspaces.editEntry",
+					"when": "view == ayxWorkspaces && viewItem == tool",
+					"group": "inline"
+				},
+				{
+					"command": "ayxWorkspaces.deleteEntry",
+					"when": "view == ayxWorkspaces && viewItem == tool"
+				}
+			]
+		},
+    "configuration": [
+      {
+        "title": "JSON Outline",
+        "properties": {
+          "jsonOutline.autorefresh": {
+            "type": "boolean",
+            "default": false
+          }
+        }
       }
     ]
   },

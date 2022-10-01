@@ -2,13 +2,47 @@
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
 
+import { AyxWorkspaceProvider, Tool } from './ayxWorkspaces';
+import { FileExplorer } from './fileExplorer';
+import { TestView } from './testView';
+
+
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
-export function activate(context: vscode.ExtensionContext) {
+export async function activate(context: vscode.ExtensionContext) {
 	
 	// Use the console to output diagnostic information (console.log) and errors (console.error)
 	// This line of code will only be executed once when your extension is activated
 	console.log('Congratulations, your extension "ayx" is now active!');
+
+	// Get the project root  path
+	const rootPath = (vscode.workspace.workspaceFolders && (vscode.workspace.workspaceFolders.length > 0))
+		? vscode.workspace.workspaceFolders[0].uri.fsPath : undefined;
+
+	// Samples of `window.registerTreeDataProvider`
+	const ayxWorkspacesProvider = new AyxWorkspaceProvider(rootPath);
+	vscode.window.registerTreeDataProvider('ayxWorkspaces', ayxWorkspacesProvider);
+	vscode.commands.registerCommand('ayxWorkspaces.refreshWorkspace', () => ayxWorkspacesProvider.refresh());
+	vscode.commands.registerCommand('ayxWorkspaces.configureWorkspace', () => vscode.window.showInformationMessage(`Successfully called refresh workspace.`));
+	vscode.commands.registerCommand('ayxWorkspaces.infoWorkspace', () => vscode.window.showInformationMessage(`Successfully called info workspace.`));
+
+	vscode.commands.registerCommand('extension.openPackageOnNpm', moduleName => vscode.commands.executeCommand('vscode.open', vscode.Uri.parse(`https://www.npmjs.com/package/${moduleName}`)));
+	vscode.commands.registerCommand('ayxWorkspaces.addEntry', () => vscode.window.showInformationMessage(`Successfully called add entry.`));
+	vscode.commands.registerCommand('ayxWorkspaces.editEntry', (node: Tool) => vscode.window.showInformationMessage(`Successfully called edit entry on ${node.label}.`));
+	vscode.commands.registerCommand('ayxWorkspaces.infoEntry', (node: Tool) => vscode.window.showInformationMessage(`Successfully called info entry on ${node.label}.`));
+	vscode.commands.registerCommand('ayxWorkspaces.deleteEntry', (node: Tool) => vscode.window.showInformationMessage(`Successfully called delete entry on ${node.label}.`));
+
+
+	// Test View
+	new TestView(context);
+
+	// try {
+	// 	await initializeFromConfigurationFile(context);
+	// }
+	// catch (err) {
+	// 	console.log('Failed to initialize a Fiddle workspace.');
+	// 	vscode.window.showErrorMessage(err);
+	// }
 
 	// The command has been defined in the package.json file
 	// Now provide the implementation of the command with registerCommand
@@ -21,6 +55,30 @@ export function activate(context: vscode.ExtensionContext) {
 
 	context.subscriptions.push(disposable);
 }
+
+// async function initializeFromConfigurationFile(context: vscode.ExtensionContext): Promise<void> {
+// 	if (!vscode.workspace.workspaceFolders) { return; }
+
+// 	const folderPromises = vscode.workspace.workspaceFolders.map(async (folder) => await initializeFolderFromConfigurationFile(folder, context));
+// 	await Promise.all(folderPromises);
+// }
+
+// async function initializeFolderFromConfigurationFile(folder: vscode.WorkspaceFolder, context: vscode.ExtensionContext): Promise<void> {
+// 	const configurationPath = path.join(folder.uri.fsPath, CONFIGURATION_FILE);
+
+// 	const configFileExists = await afs.exists(configurationPath);
+
+// 	if (configFileExists) {
+// 		const data = await afs.readFile(configurationPath);
+// 		const fiddleConfiguration = <FiddleConfiguration>JSON.parse(data.toString(UTF8));
+// 		const fiddleSourceControl = await FiddleSourceControl.fromConfiguration(fiddleConfiguration, folder, context, !fiddleConfiguration.downloaded);
+// 		registerFiddleSourceControl(fiddleSourceControl, context);
+// 		if (!fiddleConfiguration.downloaded) {
+// 			// the fiddle was not downloaded before the extension restart, so let's show it now
+// 			showFiddleInEditor(fiddleSourceControl);
+// 		}
+// 	}
+// }
 
 // this method is called when your extension is deactivated
 export function deactivate() {}
