@@ -1,43 +1,69 @@
 import * as vscode from 'vscode';
+import * as path from 'path';
 
 export class TestView {
 
 	constructor(context: vscode.ExtensionContext) {
 		const view = vscode.window.createTreeView('testView', { treeDataProvider: aNodeWithIdTreeDataProvider(), showCollapseAll: true });
 		context.subscriptions.push(view);
-		vscode.commands.registerCommand('testView.reveal', async () => {
-			const key = await vscode.window.showInputBox({ placeHolder: 'Type the label of the item to reveal' });
-			if (key) {
-				await view.reveal({ key }, { focus: true, select: false, expand: true });
-			}
-		});
-		vscode.commands.registerCommand('testView.changeTitle', async () => {
-			const title = await vscode.window.showInputBox({ prompt: 'Type the new title for the Test View', placeHolder: view.title });
-			if (title) {
-				view.title = title;
+		vscode.commands.registerCommand('testView.reveal', async (uri: string) => {
+			if(uri){
+				await vscode.env.openExternal(vscode.Uri.parse(uri));
 			}
 		});
 	}
 }
 
 const tree: any = {
-	'a': {
-		'aa': {
-			'aaa': {
-				'aaaa': {
-					'aaaaa': {
-						'aaaaaa': {
-
-						}
-					}
-				}
-			}
+	'readDocu': {
+		label: 'Read Extension Documentation',
+		tooltip: 'Read Extension Documentation',
+		collapsibleState: vscode.TreeItemCollapsibleState.None,
+		iconPath: {
+			light: path.join(__filename, '..', '..', 'resources', 'icons', 'light', 'book.svg'),
+			dark: path.join(__filename, '..', '..', 'resources', 'icons', 'dark', 'book.svg')
 		},
-		'ab': {}
+		command: { command: 'testView.reveal', title:"", arguments: [`https://help.alteryx.com/developer-help/platform-sdk-quickstart-guide`]},
 	},
-	'b': {
-		'ba': {},
-		'bb': {}
+	'watchVideo': {
+		label: 'Watch Extension Tutorial Video',
+		tooltip: 'Watch Extension Tutorial Video',
+		collapsibleState: vscode.TreeItemCollapsibleState.None,
+		iconPath: {
+			light: path.join(__filename, '..', '..', 'resources', 'icons', 'light', 'play-circle.svg'),
+			dark: path.join(__filename, '..', '..', 'resources', 'icons', 'dark', 'play-circle.svg')
+		},
+		command: { command: 'testView.reveal', title:"", arguments: [`https://help.alteryx.com/developer-help/platform-sdk-quickstart-guide`]},
+	},
+	'gettingSDK': {
+		label: 'Get Started with Alteryx SDK',
+		tooltip: 'Get Started with Alteryx SDK',
+		collapsibleState: vscode.TreeItemCollapsibleState.None,
+		iconPath: {
+			light: path.join(__filename, '..', '..', 'resources', 'icons', 'light', 'star-empty.svg'),
+			dark: path.join(__filename, '..', '..', 'resources', 'icons', 'dark', 'star-empty.svg')
+		},
+		command: { command: 'testView.reveal', title:"", arguments: [`https://help.alteryx.com/developer-help/platform-sdk-quickstart-guide`]},
+	},
+	'reportIssue': {
+		label: 'Report Issues',
+		tooltip: 'Report Issues',
+		collapsibleState: vscode.TreeItemCollapsibleState.None,
+		iconPath: {
+			light: path.join(__filename, '..', '..', 'resources', 'icons', 'light', 'comment.svg'),
+			dark: path.join(__filename, '..', '..', 'resources', 'icons', 'dark', 'comment.svg')
+		},
+		command: { command: 'testView.reveal', title:"", arguments: [`https://help.alteryx.com/developer-help/platform-sdk-quickstart-guide`]},
+	},
+	'installAlteryx': {
+		label: 'Install Alteryx',
+		tooltip: 'Install Alteryx',
+		collapsibleState: vscode.TreeItemCollapsibleState.None,
+		iconPath: {
+			light: path.join(__filename, '..', '..', 'resources', 'icons', 'light', 'desktop-download.svg'),
+			dark: path.join(__filename, '..', '..', 'resources', 'icons', 'dark', 'desktop-download.svg')
+		},
+		command: { command: 'testView.reveal', arguments: [`https://www.alteryx.com/designer-trial/free-trial-alteryx`]},
 	}
 };
 const nodes: any = {};
@@ -51,10 +77,6 @@ function aNodeWithIdTreeDataProvider(): vscode.TreeDataProvider<{ key: string }>
 			const treeItem = getTreeItem(element.key);
 			treeItem.id = element.key;
 			return treeItem;
-		},
-		getParent: ({ key }: { key: string }): { key: string } | undefined => {
-			const parentKey = key.substring(0, key.length - 1);
-			return parentKey ? new Key(parentKey) : undefined;
 		}
 	};
 }
@@ -63,17 +85,16 @@ function getChildren(key: string | undefined): string[] {
 	if (!key) {
 		return Object.keys(tree);
 	}
-	const treeElement = getTreeElement(key);
-	if (treeElement) {
-		return Object.keys(treeElement);
-	}
 	return [];
 }
 
 function getTreeItem(key: string): vscode.TreeItem {
-	const treeElement = getTreeElement(key);
+	const treeElement = getTreeElement(key) as vscode.TreeItem;
+	if (treeElement) {
+		return treeElement ;
+	}
 	// An example of how to use codicons in a MarkdownString in a tree item tooltip.
-	const tooltip = new vscode.MarkdownString(`$(zap) Tooltip for ${key}`, true);
+	const tooltip = new vscode.MarkdownString(`$(zap) ${key}`, true);
 	return {
 		label: /**vscode.TreeItemLabel**/<any>{ label: key, highlights: key.length > 1 ? [[key.length - 2, key.length - 1]] : void 0 },
 		tooltip,
@@ -83,11 +104,9 @@ function getTreeItem(key: string): vscode.TreeItem {
 
 function getTreeElement(element: string): any {
 	let parent = tree;
-	for (let i = 0; i < element.length; i++) {
-		parent = parent[element.substring(0, i + 1)];
-		if (!parent) {
-			return null;
-		}
+	parent = parent[element];
+	if (!parent) {
+		return null;
 	}
 	return parent;
 }

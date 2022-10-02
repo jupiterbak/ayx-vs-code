@@ -45,37 +45,24 @@ export class AyxWorkspaceProvider implements vscode.TreeDataProvider<vscode.Tree
 							label: `long_name: '${config.long_name}'`,
 							tooltip: `long_name: '${config.long_name}'`,
 							collapsibleState: vscode.TreeItemCollapsibleState.None,
-							iconPath: {
-								light: path.join(__filename, '..', '..', 'resources', 'icons', 'light', 'tag.svg'),
-								dark: path.join(__filename, '..', '..', 'resources', 'icons', 'dark', 'tag.svg')
-							}							
+														
 						},
 						{
 							label: `version: '${config.version}'`,
 							tooltip: `version: '${config.version}'`,
 							collapsibleState: vscode.TreeItemCollapsibleState.None,
-							iconPath: {
-								light: path.join(__filename, '..', '..', 'resources', 'icons', 'light', 'tag.svg'),
-								dark: path.join(__filename, '..', '..', 'resources', 'icons', 'dark', 'tag.svg')
-							}							
+														
 						},
 						{
 							label: `help_url: '${config.help_url}'`,
 							tooltip: `help_url: '${config.help_url}'`,
 							collapsibleState: vscode.TreeItemCollapsibleState.None,
-							iconPath: {
-								light: path.join(__filename, '..', '..', 'resources', 'icons', 'light', 'tag.svg'),
-								dark: path.join(__filename, '..', '..', 'resources', 'icons', 'dark', 'tag.svg')
-							}							
+														
 						},
 						{
 							label: `icon_path: '${config.icon_path}'`,
 							tooltip: `icon_path: '${config.icon_path}'`,
-							collapsibleState: vscode.TreeItemCollapsibleState.None,
-							iconPath: {
-								light: path.join(__filename, '..', '..', 'resources', 'icons', 'light', 'tag.svg'),
-								dark: path.join(__filename, '..', '..', 'resources', 'icons', 'dark', 'tag.svg')
-							}							
+							collapsibleState: vscode.TreeItemCollapsibleState.None,							
 						},
 						{
 							label: `inputs (${Object.keys(config.input_anchors).length})`,
@@ -225,13 +212,13 @@ export class AyxToolConfig extends vscode.TreeItem {
 		public readonly collapsibleState: vscode.TreeItemCollapsibleState,
 		public readonly command?: vscode.Command
 	) {
-		super('configuration', collapsibleState);
+		super('info', collapsibleState);
 		this.tooltip = `AyxToolConfigration for ${this.config.long_name}`;
 	}
 
 	iconPath = {
-		light: path.join(__filename, '..', '..', 'resources', 'icons', 'light', 'file.svg'),
-		dark: path.join(__filename, '..', '..', 'resources', 'icons', 'dark', 'file.svg')
+		light: path.join(__filename, '..', '..', 'resources', 'icons', 'light', 'info.svg'),
+		dark: path.join(__filename, '..', '..', 'resources', 'icons', 'dark', 'info.svg')
 	};
 
 	contextValue = 'tool_configuration';

@@ -4,6 +4,8 @@ import * as vscode from 'vscode';
 
 import { AyxWorkspaceProvider, AyxTool, AyxToolUI, AyxToolBackend } from './ayxWorkspaces';
 import { TestView } from './testView';
+import { UiFileExplorer } from './UiFileExplorer';
+import { BackendFileExplorer } from './BackendFileExplorer';
 
 
 // this method is called when your extension is activated
@@ -21,32 +23,53 @@ export async function activate(context: vscode.ExtensionContext) {
 	// Samples of `window.registerTreeDataProvider`
 	const ayxWorkspacesProvider = new AyxWorkspaceProvider(rootPath);
 	vscode.window.registerTreeDataProvider('ayxWorkspaces', ayxWorkspacesProvider);
-	vscode.commands.registerCommand('ayxWorkspaces.refresh', () => ayxWorkspacesProvider.refresh());
-	vscode.commands.registerCommand('ayxWorkspaces.configure', () => vscode.window.showInformationMessage(`Successfully called configure.`));
-	
-	vscode.commands.registerCommand('ayxWorkspaces.infoWorkspace', () => vscode.window.showInformationMessage(`Successfully called info workspace.`));
-	vscode.commands.registerCommand('ayxWorkspaces.editWorkspace', () => vscode.window.showInformationMessage(`Successfully called edit workspace.`));
 
-	vscode.commands.registerCommand('extension.openPackageOnNpm', moduleName => vscode.commands.executeCommand('vscode.open', vscode.Uri.parse(`https://www.npmjs.com/package/${moduleName}`)));
-	vscode.commands.registerCommand('ayxWorkspaces.addEntry', () => vscode.window.showInformationMessage(`Successfully called add entry.`));
-	vscode.commands.registerCommand('ayxWorkspaces.editEntry', (node: AyxTool) => vscode.window.showInformationMessage(`Successfully called edit entry on ${node.label}.`));
-	vscode.commands.registerCommand('ayxWorkspaces.infoEntry', (node: AyxTool) => vscode.window.showInformationMessage(`Successfully called info entry on ${node.label}.`));
-	vscode.commands.registerCommand('ayxWorkspaces.deleteEntry', (node: AyxTool) => vscode.window.showInformationMessage(`Successfully called delete entry on ${node.label}.`));
-	vscode.commands.registerCommand('ayxWorkspaces.debugEntryUI', (node: AyxToolUI) => vscode.window.showInformationMessage(`Successfully called debug entry ui on ${node.label}.`));
-	vscode.commands.registerCommand('ayxWorkspaces.debugEntryBackend', (node: AyxToolBackend) => vscode.window.showInformationMessage(`Successfully called debug entry backend on ${node.label}.`));
+	// Define & register commands
+	context.subscriptions.push(
+		vscode.commands.registerCommand('ayxWorkspaces.initialize', () => vscode.window.showInformationMessage(`Successfully called initialize workspace.`))
+	);
+	context.subscriptions.push(
+		vscode.commands.registerCommand('ayxWorkspaces.refresh', () => ayxWorkspacesProvider.refresh())
+	);
+	context.subscriptions.push(
+		vscode.commands.registerCommand('ayxWorkspaces.configure', () => vscode.window.showInformationMessage(`Successfully called configure.`))
+	);
+	
+	context.subscriptions.push(
+		vscode.commands.registerCommand('ayxWorkspaces.infoWorkspace', () => vscode.window.showInformationMessage(`Successfully called info workspace.`))
+	);
+	context.subscriptions.push(
+		vscode.commands.registerCommand('ayxWorkspaces.editWorkspace', () => vscode.window.showInformationMessage(`Successfully called edit workspace.`))
+	);
+	context.subscriptions.push(
+		vscode.commands.registerCommand('ayxWorkspaces.addEntry', () => vscode.window.showInformationMessage(`Successfully called add entry.`))
+	);
+	context.subscriptions.push(
+		vscode.commands.registerCommand('ayxWorkspaces.editEntry', (node: AyxTool) => vscode.window.showInformationMessage(`Successfully called edit entry on ${node.label}.`))
+	);
+	context.subscriptions.push(
+		vscode.commands.registerCommand('ayxWorkspaces.infoEntry', (node: AyxTool) => vscode.window.showInformationMessage(`Successfully called info entry on ${node.label}.`))
+	);
+	context.subscriptions.push(
+		vscode.commands.registerCommand('ayxWorkspaces.deleteEntry', (node: AyxTool) => vscode.window.showInformationMessage(`Successfully called delete entry on ${node.label}.`))
+	);
+	context.subscriptions.push(
+		vscode.commands.registerCommand('ayxWorkspaces.debugEntryUI', (node: AyxToolUI) => vscode.window.showInformationMessage(`Successfully called debug entry ui on ${node.label}.`))
+	);
+	context.subscriptions.push(
+		vscode.commands.registerCommand('ayxWorkspaces.debugEntryBackend', (node: AyxToolBackend) => vscode.window.showInformationMessage(`Successfully called debug entry backend on ${node.label}.`))
+	);
 	
 	
 	// Test View
 	new TestView(context);
 
-	// try {
-	// 	await initializeFromConfigurationFile(context);
-	// }
-	// catch (err) {
-	// 	console.log('Failed to initialize a Fiddle workspace.');
-	// 	vscode.window.showErrorMessage(err);
-	// }
+	// UI File Explorer
+	new UiFileExplorer(context);
 
+	// Backend File Explorer
+	new BackendFileExplorer(context);
+	
 	// The command has been defined in the package.json file
 	// Now provide the implementation of the command with registerCommand
 	// The commandId parameter must match the command field in package.json
