@@ -3,6 +3,7 @@ import * as path from 'path';
 import * as fs from 'fs';
 import * as mkdirp from 'mkdirp';
 import * as rimraf from 'rimraf';
+import { Terminal } from './Terminal';
 
 //#region Utilities
 
@@ -154,8 +155,13 @@ interface Entry {
 export class FileSystemProvider implements vscode.TreeDataProvider<Entry>, vscode.FileSystemProvider {
 
 	private _onDidChangeFile: vscode.EventEmitter<vscode.FileChangeEvent[]>;
+	
+	private _onDidChangeTreeData: vscode.EventEmitter<Entry | undefined | void> = new vscode.EventEmitter<Entry | undefined | void>();
+	readonly onDidChangeTreeData: vscode.Event<Entry | undefined | void> = this._onDidChangeTreeData.event;
 
-	constructor() {
+	constructor(
+		public ayxTool?: string
+	) {
 		this._onDidChangeFile = new vscode.EventEmitter<vscode.FileChangeEvent[]>();
 	}
 
@@ -270,17 +276,23 @@ export class FileSystemProvider implements vscode.TreeDataProvider<Entry>, vscod
 			return children.map(([name, type]) => ({ uri: vscode.Uri.file(path.join(element.uri.fsPath, name)), type }));
 		}
 
-		const workspaceFolder = (vscode.workspace.workspaceFolders ?? []).filter(folder => folder.uri.scheme === 'file')[0];
-		if (workspaceFolder) {
-			const children = await this.readDirectory(workspaceFolder.uri);
-			children.sort((a, b) => {
-				if (a[1] === b[1]) {
-					return a[0].localeCompare(b[0]);
+		if(this.ayxTool){
+			const workspaceFolder = (vscode.workspace.workspaceFolders ?? []).filter(folder => folder.uri.scheme === 'file')[0];
+			if (workspaceFolder) {
+				let _uri = vscode.Uri.file(workspaceFolder.uri.fsPath);
+				if(this.ayxTool){
+					_uri = vscode.Uri.joinPath(_uri, `./ui/${this.ayxTool}`);
 				}
-				return a[1] === vscode.FileType.Directory ? -1 : 1;
-			});
-			return children.map(([name, type]) => ({ uri: vscode.Uri.file(path.join(workspaceFolder.uri.fsPath, name)), type }));
-		}
+				const children = await this.readDirectory(_uri);
+				children.sort((a, b) => {
+					if (a[1] === b[1]) {
+						return a[0].localeCompare(b[0]);
+					}
+					return a[1] === vscode.FileType.Directory ? -1 : 1;
+				});
+				return children.map(([name, type]) => ({ uri: vscode.Uri.file(path.join(_uri.fsPath, name)), type }));
+			}
+		}		
 
 		return [];
 	}
@@ -293,16 +305,87 @@ export class FileSystemProvider implements vscode.TreeDataProvider<Entry>, vscod
 		}
 		return treeItem;
 	}
+
+	public refresh(ayxTool?:string): void {
+		if(ayxTool){
+			this.ayxTool = ayxTool;
+		}
+		this._onDidChangeTreeData.fire();
+	}
 }
 
 export class UiFileExplorer {
+	private treeDataProvider:FileSystemProvider;
+	private view: vscode.TreeView<Entry>;
+
 	constructor(context: vscode.ExtensionContext) {
-		const treeDataProvider = new FileSystemProvider();
-		context.subscriptions.push(vscode.window.createTreeView('UiFileExplorer', { treeDataProvider }));
+		this.treeDataProvider = new FileSystemProvider();
+		this.view = vscode.window.createTreeView('UiFileExplorer', { treeDataProvider: this.treeDataProvider , showCollapseAll: true});
+		
+		context.subscriptions.push(this.view);		
+		vscode.commands.registerCommand('ayxUI.debugEntryUI', 
+			() => this.startDebugging()
+		);
 		vscode.commands.registerCommand('fileExplorer.openFile', (resource) => this.openResource(resource));
+		vscode.commands.registerCommand('fileExplorer.refreshFile', () => this.treeDataProvider.refresh());
 	}
 
 	private openResource(resource: vscode.Uri): void {
 		vscode.window.showTextDocument(resource);
+	}
+
+	public refresh(ayxTool?:string): void {
+		if(this.treeDataProvider.ayxTool){
+			this.view.title = `UI [typescript project] - ${this.treeDataProvider.ayxTool}`;
+		}
+		this.treeDataProvider.refresh(ayxTool);
+	}
+
+	public startDebugging(): void {
+		if(this.treeDataProvider.ayxTool){
+			vscode.window.withProgress({
+				location: vscode.ProgressLocation.Notification,
+				title: "Starting local server for AYX Tool UI.",
+				cancellable: true
+			}, (progress, token) => {
+				token.onCancellationRequested(() => {
+					console.log("User canceled the long running operation");
+				});
+	
+				progress.report({ increment: 0 });
+
+				const rootPath = (vscode.workspace.workspaceFolders && (vscode.workspace.workspaceFolders.length > 0))
+				? vscode.workspace.workspaceFolders[0].uri : undefined;
+				if(rootPath){
+					const cmdPath = vscode.Uri.joinPath(rootPath, `./ui/${this.treeDataProvider.ayxTool}/`);
+					let ayxTerminal = Terminal.getTerminal();
+					if(ayxTerminal.getState()){
+						ayxTerminal.dispose();
+						ayxTerminal = Terminal.getTerminal();
+					}							
+					ayxTerminal.sendText(`cd ${cmdPath.fsPath}`);
+					progress.report({ increment: 20 });
+					ayxTerminal.sendText("npm install");
+					progress.report({ increment: 60 });
+					ayxTerminal.sendText("npm run build");
+					progress.report({ increment: 80 });			
+					ayxTerminal.sendText("npm run start");
+					progress.report({ increment: 90 });
+					ayxTerminal.sendText(`cd ${rootPath.fsPath}`);
+					ayxTerminal.show();
+				}
+	
+				progress.report({ increment: 100 });
+	
+				const p = new Promise<void>(resolve => {
+					setTimeout(() => {
+						resolve();
+					}, 500);
+				});			
+				return p;
+			});				
+		}else{
+			vscode.window.showErrorMessage('No active AYX tool');
+		}
 	}
 }

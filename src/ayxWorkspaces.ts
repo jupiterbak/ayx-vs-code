@@ -2,6 +2,8 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
+import { UiFileExplorer } from './UiFileExplorer';
+import { BackendFileExplorer } from './BackendFileExplorer';
 
 export class AyxWorkspaceProvider implements vscode.TreeDataProvider<vscode.TreeItem> {
 
@@ -34,8 +36,8 @@ export class AyxWorkspaceProvider implements vscode.TreeDataProvider<vscode.Tree
 				const config = (element as AyxTool).config as AYXToolConfiguration;
 				return Promise.resolve([
 					new AyxToolConfig(config.configuration, config.configuration && Object.keys(config.configuration).length ? vscode.TreeItemCollapsibleState.Collapsed : vscode.TreeItemCollapsibleState.None),
-					new AyxToolBackend(config.backend, config.backend && Object.keys(config.backend).length ? vscode.TreeItemCollapsibleState.Collapsed : vscode.TreeItemCollapsibleState.None),
-					new AyxToolUI(config.ui, vscode.TreeItemCollapsibleState.Collapsed)					
+					new AyxToolBackend(config.backend,  config.configuration, config.backend && Object.keys(config.backend).length ? vscode.TreeItemCollapsibleState.Collapsed : vscode.TreeItemCollapsibleState.None),
+					new AyxToolUI(config.ui, config.configuration, vscode.TreeItemCollapsibleState.Collapsed)					
 				]);
 			}else if(context === "tool_configuration"){
 				const config = (element as AyxToolConfig).config as AYXToolConfigurationConfig;
@@ -135,7 +137,7 @@ export class AyxWorkspaceProvider implements vscode.TreeDataProvider<vscode.Tree
 	}
 
 	private getAyxToolNodes(workspace: AYXWorkspaceConfiguration): AyxTool[] {
-		const tools = Object.keys(workspace.tools).map(key => new AyxTool(workspace.tools[key], vscode.TreeItemCollapsibleState.Expanded));
+		const tools = Object.keys(workspace.tools).map(key => new AyxTool(workspace.tools[key], vscode.TreeItemCollapsibleState.Collapsed));
 		return tools;
 	}
 
@@ -155,6 +157,7 @@ export class AyxToolUI extends vscode.TreeItem {
 
 	constructor(
 		public config: AYXToolUIConfiguration,
+		public tool:AYXToolConfigurationConfig,
 		public readonly collapsibleState: vscode.TreeItemCollapsibleState,
 		public readonly command?: vscode.Command
 	) {
@@ -179,6 +182,7 @@ export class AyxToolBackend extends vscode.TreeItem {
 
 	constructor(
 		public config: AYXToolBackendConfiguration,
+		public tool:AYXToolConfigurationConfig,
 		public readonly collapsibleState: vscode.TreeItemCollapsibleState,
 		public readonly command?: vscode.Command
 	) {
@@ -251,6 +255,7 @@ export class AyxTool extends vscode.TreeItem {
 	) {
 		super(config.configuration.long_name, collapsibleState);
 		this.tooltip = `AyxTool: ${this.config.configuration.long_name}`;
+		this.command = { command: 'ayxWorkspaces.toolSelected', title: "Tool Selected", arguments: [this.config.configuration.long_name]};
 	}
 
 	iconPath = {
@@ -294,4 +299,82 @@ export class AYXWorkspace extends vscode.TreeItem{
 	};
 
 	contextValue = 'workspace';
+}
+
+export class AyxWorkspace {
+	private selectedTool:string = String();
+	
+	constructor(private context: vscode.ExtensionContext, private rootPath: string | undefined, private toolUiView: UiFileExplorer, private toolBackendView: BackendFileExplorer) {
+		// Samples of `window.registerTreeDataProvider`
+		const ayxWorkspacesProvider = new AyxWorkspaceProvider(rootPath);
+		const view = vscode.window.createTreeView('ayxWorkspaces', { treeDataProvider: ayxWorkspacesProvider, showCollapseAll: true });
+		context.subscriptions.push(view);
+
+		// Define & register commands
+		vscode.commands.registerCommand('ayxWorkspaces.initialize', () => vscode.window.showInformationMessage(`Successfully called initialize workspace.`));
+		
+		vscode.commands.registerCommand('ayxWorkspaces.infoWorkspace', (node: AYXWorkspace) => {
+			this.openRootConfigFile();			
+		});
+		vscode.commands.registerCommand('ayxWorkspaces.refresh', () => ayxWorkspacesProvider.refresh());
+		vscode.commands.registerCommand('ayxWorkspaces.editEntry', (node: AyxTool) => {
+			this.openRootConfigFile();
+		});
+		vscode.commands.registerCommand('ayxWorkspaces.toolSelected', (tool:string) => {
+			this.selectedTool = tool;
+			this.toolUiView.refresh(tool);
+			this.toolBackendView.refresh(tool);
+		});
+		vscode.commands.registerCommand('ayxWorkspaces.debugEntryUI', 
+			(node: AyxToolUI) => {
+				this.selectedTool = node.tool.long_name;
+				this.toolUiView.refresh(node.tool.long_name);
+				this.toolUiView.startDebugging();
+			}
+		);
+		vscode.commands.registerCommand('ayxWorkspaces.debugEntryBackend', 
+			(node: AyxToolUI) => {
+				this.selectedTool = node.tool.long_name;
+				this.toolBackendView.refresh(node.tool.long_name);
+				this.toolBackendView.startDebugging();
+			}
+		);
+		context.subscriptions.push(
+			vscode.commands.registerCommand('ayxWorkspaces.configurePython', async () => {
+				const rslt = await vscode.commands.executeCommand('python.setInterpreter');
+			})
+		);		
+
+		context.subscriptions.push(
+			vscode.commands.registerCommand('ayxWorkspaces.addEntry', () => vscode.window.showInformationMessage(`Successfully called add entry.`))
+		);
+
+		context.subscriptions.push(
+			vscode.commands.registerCommand('ayxWorkspaces.infoEntry', (node: AyxTool) => vscode.window.showInformationMessage(`Successfully called info entry on ${node.label}.`))
+		);
+		context.subscriptions.push(
+			vscode.commands.registerCommand('ayxWorkspaces.deleteEntry', (node: AyxTool) => vscode.window.showInformationMessage(`Successfully called delete entry on ${node.label}.`))
+		);
+	}
+
+	private openRootConfigFile(){
+		if(this.rootPath){
+			const packageJsonPath = path.join(this.rootPath, 'ayx_workspace.json');
+			if (this.pathExists(packageJsonPath)) {
+				vscode.window.showTextDocument(vscode.Uri.file(packageJsonPath));
+			} else {
+				vscode.window.showInformationMessage('Workspace has no ayx_workspace.json');
+				return Promise.resolve([]);
+			}
+		}
+	}
+
+	private pathExists(p: string): boolean {
+		try {
+			fs.accessSync(p);
+		} catch (err) {
+			return false;
+		}
+		return true;
+	}
 }

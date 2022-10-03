@@ -17,37 +17,46 @@
     "onCommand:ayx.helloWorld",
     "onCommand:ayxWorkspaces.refresh",
 		"onCommand:ayxWorkspaces.configure",
+    "onCommand:ayxWorkspaces.configurePython",
 		"onCommand:ayxWorkspaces.infoWorkspace",
-		"onCommand:ayxWorkspaces.editWorkspace",
 		"onCommand:ayxWorkspaces.addEntry",
 		"onCommand:ayxWorkspaces.refreshEntry",
     "onCommand:ayxWorkspaces.editEntry",
     "onCommand:ayxWorkspaces.deleteEntry",
     "onCommand:ayxWorkspaces.debugEntryUI",
     "onCommand:ayxWorkspaces.debugEntryBackend",
-    "onCommand:testView.reveal"
+    "onCommand:testView.reveal",
+    "onCommand:fileExplorer.openFile",
+    "onCommand:fileExplorer.refreshFile",
+    "onCommand:BackendFileExplorer.refreshFile",
+    "onCommand:BackendFileExplorer.openFile"
   ],
   "main": "./dist/extension.js",
   "contributes": {
     "commands": [
       {
-				"command": "ayx.helloWorld",
-				"title": "Hello World"
-			},
-      {
+        "category": "Alteryx",
 				"command": "ayxWorkspaces.initialize",
 				"title": "Initialize AYX Workspace",
 				"icon": "$(settings-gear)"
 			},
       {
+        "category": "Alteryx",
 				"command": "ayxWorkspaces.refresh",
 				"title": "Refresh AYX Workspace",
 				"icon": "$(refresh)"
 			},
       {
+        "category": "Alteryx",
 				"command": "ayxWorkspaces.configure",
 				"title": "Configure AYX Workspace",
 				"icon": "$(gear)"
+			},
+      {
+        "category": "Alteryx",
+				"command": "ayxWorkspaces.configurePython",
+				"title": "Set Python Environment",
+        "icon": "$(gear)"
 			},
       {
 				"command": "ayxWorkspaces.infoWorkspace",
@@ -55,9 +64,9 @@
         "icon": "$(eye)"
 			},
       {
-				"command": "ayxWorkspaces.editWorkspace",
-				"title": "Edit AYX Workspace",
-				"icon": "$(edit)"
+				"command": "ayxWorkspaces.toolSelected",
+				"title": "AYX Tool Selected",
+				"icon": "$(tag)"
 			},
 			{
 				"command": "ayxWorkspaces.addEntry",
@@ -81,8 +90,8 @@
 			},
       {
 				"command": "ayxWorkspaces.debugEntryUI",
-				"title": "Debug UI for AYX Tool",
-				"icon": "$(debug-console)"
+				"title": "View UI for AYX Tool",
+				"icon": "$(open-preview)"
 			},
       {
 				"command": "ayxWorkspaces.debugEntryBackend",
@@ -94,13 +103,32 @@
 				"title": "Reveal"
 			},
       {
+				"command": "ayxUI.debugEntryUI",
+				"title": "Debug UI for AYX Tool",
+				"icon": "$(debug)"
+			},
+      {
+				"command": "ayxBackend.debugEntryBackend",
+				"title": "Debug UI for AYX Tool",
+				"icon": "$(debug)"
+			},
+      {
 				"command": "fileExplorer.refreshFile",
 				"title": "Refresh",
 				"icon": "$(refresh)"
 			},
-			{
+      {
+				"command": "BackendFileExplorer.openFile",
+				"title": "Open File"
+			},
+      {
 				"command": "fileExplorer.openFile",
 				"title": "Open File"
+			},
+      {
+				"command": "BackendFileExplorer.refreshFile",
+				"title": "Refresh",
+				"icon": "$(refresh)"
 			}
     ],
     "viewsContainers": {
@@ -121,11 +149,13 @@
         },
         {
 					"id": "UiFileExplorer",
-					"name": "Tool UI Files"
+					"name": "UI [typescript project]",
+          "contextualTitle": "UI [typescript project]"
 				},
         {
 					"id": "BackendFileExplorer",
-					"name": "Tool Backend Files"
+					"name": "BACKEND [Python Project]",
+          "contextualTitle": "BACKEND [Python Project]"
 				},
         {
           "id": "testView",
@@ -141,21 +171,27 @@
 					"group": "navigation"
 				},
         {
-					"command": "ayxWorkspaces.configure",
+					"command": "ayxWorkspaces.configurePython",
 					"when": "view == ayxWorkspaces",
           "group": "navigation"
+				},
+        {
+					"command": "ayxUI.debugEntryUI",
+					"when": "view == UiFileExplorer",
+          "group": "navigation"
+				},
+        {
+					"command": "ayxBackend.debugEntryBackend",
+					"when": "view == BackendFileExplorer",
+          "group": "navigation"
 				}
+        
 			],
 			"view/item/context": [
         {
 					"command": "ayxWorkspaces.infoWorkspace",
 					"when": "view == ayxWorkspaces && viewItem == workspace",
           "group": "inline"
-				},
-        {
-					"command": "ayxWorkspaces.editWorkspace",
-					"when": "view == ayxWorkspaces && viewItem == workspace",
-					"group": "inline"
 				},
         {
 					"command": "ayxWorkspaces.editEntry",
@@ -188,7 +224,7 @@
 					"group": "inline"
 				},
         {
-					"command": "fileExplorer.refreshFile",
+					"command": "BackendFileExplorer.refreshFile",
 					"when": "view == BackendFileExplorer && viewItem == file",
 					"group": "inline"
 				}
@@ -198,6 +234,14 @@
       {
         "view": "ayxWorkspaces",
         "contents": "In order to start the devellopment of new Alteryx tools, you can open a folder containing an Alteryx workspace or create a new workspace.\n[Open Folder](command:vscode.openFolder)\n[Create New Workspace](command:ayxWorkspaces.initialize)\nTo learn more about how to use the Alteryx SDK in VS Code [read our docs](https://help.alteryx.com/developer-help/platform-sdk-quickstart-guide)."
+      },
+      {
+        "view": "UiFileExplorer",
+        "contents": "Please select a tool in the Alteryx SDK Workspace.\nTo learn more about how to use the Alteryx SDK in VS Code [read our docs](https://help.alteryx.com/developer-help/platform-sdk-quickstart-guide)."
+      },
+      {
+        "view": "BackendFileExplorer",
+        "contents": "Please select a tool in the Alteryx SDK Workspace.\nTo learn more about how to use the Alteryx SDK in VS Code [read our docs](https://help.alteryx.com/developer-help/platform-sdk-quickstart-guide)."
       }
     ],
     "configuration": [

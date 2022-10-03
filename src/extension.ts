@@ -2,11 +2,10 @@
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
 
-import { AyxWorkspaceProvider, AyxTool, AyxToolUI, AyxToolBackend } from './ayxWorkspaces';
+import { AyxWorkspace } from './ayxWorkspaces';
 import { TestView } from './testView';
 import { UiFileExplorer } from './UiFileExplorer';
 import { BackendFileExplorer } from './BackendFileExplorer';
-
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -14,61 +13,23 @@ export async function activate(context: vscode.ExtensionContext) {
 	
 	// Use the console to output diagnostic information (console.log) and errors (console.error)
 	// This line of code will only be executed once when your extension is activated
-	console.log('Congratulations, your extension "ayx" is now active!');
+	console.log('Congratulations, your extension "Alteryx" is now active!');
+
+	// Test View
+	const helpView = new TestView(context);
+
+	// UI File Explorer
+	const toolUiView = new UiFileExplorer(context);
+
+	// UI File Explorer
+	const toolBackendView = new BackendFileExplorer(context);
 
 	// Get the project root  path
 	const rootPath = (vscode.workspace.workspaceFolders && (vscode.workspace.workspaceFolders.length > 0))
 		? vscode.workspace.workspaceFolders[0].uri.fsPath : undefined;
 
-	// Samples of `window.registerTreeDataProvider`
-	const ayxWorkspacesProvider = new AyxWorkspaceProvider(rootPath);
-	vscode.window.registerTreeDataProvider('ayxWorkspaces', ayxWorkspacesProvider);
-
-	// Define & register commands
-	context.subscriptions.push(
-		vscode.commands.registerCommand('ayxWorkspaces.initialize', () => vscode.window.showInformationMessage(`Successfully called initialize workspace.`))
-	);
-	context.subscriptions.push(
-		vscode.commands.registerCommand('ayxWorkspaces.refresh', () => ayxWorkspacesProvider.refresh())
-	);
-	context.subscriptions.push(
-		vscode.commands.registerCommand('ayxWorkspaces.configure', () => vscode.window.showInformationMessage(`Successfully called configure.`))
-	);
-	
-	context.subscriptions.push(
-		vscode.commands.registerCommand('ayxWorkspaces.infoWorkspace', () => vscode.window.showInformationMessage(`Successfully called info workspace.`))
-	);
-	context.subscriptions.push(
-		vscode.commands.registerCommand('ayxWorkspaces.editWorkspace', () => vscode.window.showInformationMessage(`Successfully called edit workspace.`))
-	);
-	context.subscriptions.push(
-		vscode.commands.registerCommand('ayxWorkspaces.addEntry', () => vscode.window.showInformationMessage(`Successfully called add entry.`))
-	);
-	context.subscriptions.push(
-		vscode.commands.registerCommand('ayxWorkspaces.editEntry', (node: AyxTool) => vscode.window.showInformationMessage(`Successfully called edit entry on ${node.label}.`))
-	);
-	context.subscriptions.push(
-		vscode.commands.registerCommand('ayxWorkspaces.infoEntry', (node: AyxTool) => vscode.window.showInformationMessage(`Successfully called info entry on ${node.label}.`))
-	);
-	context.subscriptions.push(
-		vscode.commands.registerCommand('ayxWorkspaces.deleteEntry', (node: AyxTool) => vscode.window.showInformationMessage(`Successfully called delete entry on ${node.label}.`))
-	);
-	context.subscriptions.push(
-		vscode.commands.registerCommand('ayxWorkspaces.debugEntryUI', (node: AyxToolUI) => vscode.window.showInformationMessage(`Successfully called debug entry ui on ${node.label}.`))
-	);
-	context.subscriptions.push(
-		vscode.commands.registerCommand('ayxWorkspaces.debugEntryBackend', (node: AyxToolBackend) => vscode.window.showInformationMessage(`Successfully called debug entry backend on ${node.label}.`))
-	);
-	
-	
-	// Test View
-	new TestView(context);
-
-	// UI File Explorer
-	new UiFileExplorer(context);
-
-	// Backend File Explorer
-	new BackendFileExplorer(context);
+	// UI Workspace
+	const workspaceView = new AyxWorkspace(context, rootPath, toolUiView, toolBackendView);
 	
 	// The command has been defined in the package.json file
 	// Now provide the implementation of the command with registerCommand
