@@ -45,7 +45,6 @@ export class Terminal {
         //     vscode.window.showInformationMessage(`onDidCloseTerminal, name: ${terminal.name}`);
         // });
         this._terminal = vscode.window.createTerminal(`Alteryx Terminal`);
-        vscode.workspace.getConfiguration
         vscode.debug.startDebugging
 	}
 }

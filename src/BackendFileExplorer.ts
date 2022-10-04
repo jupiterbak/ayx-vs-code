@@ -281,7 +281,7 @@ export class FileSystemProvider implements vscode.TreeDataProvider<Entry>, vscod
 			if (workspaceFolder) {
 				let _uri = vscode.Uri.file(workspaceFolder.uri.fsPath);
 				if(this.ayxTool){
-					_uri = vscode.Uri.joinPath(_uri, `./backend/ayx_plugins/`); //${this.ayxTool}
+					_uri = vscode.Uri.joinPath(_uri, `./backend/`); //${this.ayxTool}
 				}
 				const children = await this.readDirectory(_uri);
 				children.sort((a, b) => {

@@ -4,6 +4,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { UiFileExplorer } from './UiFileExplorer';
 import { BackendFileExplorer } from './BackendFileExplorer';
+import { Terminal } from './Terminal';
 
 export class AyxWorkspaceProvider implements vscode.TreeDataProvider<vscode.TreeItem> {
 
@@ -303,6 +304,7 @@ export class AYXWorkspace extends vscode.TreeItem{
 
 export class AyxWorkspace {
 	private selectedTool:string = String();
+	private openedTerminal: vscode.Terminal | undefined;
 	
 	constructor(private context: vscode.ExtensionContext, private rootPath: string | undefined, private toolUiView: UiFileExplorer, private toolBackendView: BackendFileExplorer) {
 		// Samples of `window.registerTreeDataProvider`
@@ -311,12 +313,55 @@ export class AyxWorkspace {
 		context.subscriptions.push(view);
 
 		// Define & register commands
-		vscode.commands.registerCommand('ayxWorkspaces.initialize', () => vscode.window.showInformationMessage(`Successfully called initialize workspace.`));
+		vscode.commands.registerCommand('ayxWorkspaces.initialize', async () => {
+			await vscode.window.withProgress({
+				location: vscode.ProgressLocation.Notification,
+				title: "Configurating the python CLI to initialize an AYX workspace",
+				cancellable: true
+			}, async (progress, token) => {
+				token.onCancellationRequested(() => {
+					console.log("User canceled the long running operation");
+				});
+				progress.report({ increment: 10 });
+				progress.report({ increment: 20 });
+				const openedTerminal = await this.getPythonTerminal(true);
+				progress.report({ increment: 40 });
+				if(openedTerminal){
+					// Terminal is opened 
+					openedTerminal.show(true);
+					progress.report({ increment: 50 });
+					openedTerminal.sendText('pip install ayx-plugin-cli');
+					progress.report({ increment: 70 });
+					openedTerminal.sendText('pip install ayx-python-sdk');
+					progress.report({ increment: 80 });
+					openedTerminal.sendText('ayx_plugin_cli sdk-workspace-init');
+					progress.report({ increment: 96 });
+				}else{
+					vscode.window.showErrorMessage(`The visual studio code python extension is not installed. Please install it before moving forward.`);
+				}
+				progress.report({ increment: 100 });
+				const p = new Promise<void>(resolve => {
+					setTimeout(() => {
+						resolve();
+					}, 500);
+				});			
+				return p;
+			});
+		});
 		
 		vscode.commands.registerCommand('ayxWorkspaces.infoWorkspace', (node: AYXWorkspace) => {
 			this.openRootConfigFile();			
 		});
-		vscode.commands.registerCommand('ayxWorkspaces.refresh', () => ayxWorkspacesProvider.refresh());
+		vscode.commands.registerCommand('ayxWorkspaces.openPythonConsole', async (node: AYXWorkspace) => {
+			const openedTerminal = await this.getPythonTerminal(true);
+			openedTerminal?.show(true);
+		});
+
+		vscode.commands.registerCommand('ayxWorkspaces.refresh', () => {
+			ayxWorkspacesProvider.refresh();
+			this.toolUiView.refresh();
+			this.toolBackendView.refresh();
+		});
 		vscode.commands.registerCommand('ayxWorkspaces.editEntry', (node: AyxTool) => {
 			this.openRootConfigFile();
 		});
@@ -343,10 +388,87 @@ export class AyxWorkspace {
 			vscode.commands.registerCommand('ayxWorkspaces.configurePython', async () => {
 				const rslt = await vscode.commands.executeCommand('python.setInterpreter');
 			})
-		);		
+		);
+		context.subscriptions.push(
+			vscode.commands.registerCommand('ayxWorkspaces.configure', async () => {
+				await vscode.window.withProgress({
+					location: vscode.ProgressLocation.Notification,
+					title: "Configurating the python CLI to initialize an AYX workspace",
+					cancellable: true
+				}, async (progress, token) => {
+					token.onCancellationRequested(() => {
+						console.log("User canceled the long running operation");
+					});
+		
+					progress.report({ increment: 20 });
+					const openedTerminal = await this.getPythonTerminal(true);
+					progress.report({ increment: 40 });
+					if(openedTerminal){
+						// Terminal is opened 
+						openedTerminal.show(true);
+						progress.report({ increment: 50 });
+						openedTerminal.sendText('pip install ayx-plugin-cli');
+						progress.report({ increment: 70 });
+						openedTerminal.sendText('pip install ayx-python-sdk');
+						progress.report({ increment: 80 });
+						openedTerminal.sendText('ayx_plugin_cli sdk-workspace-init');
+						progress.report({ increment: 96 });
+						progress.report({ increment: 99 });
+					}else{
+						vscode.window.showErrorMessage(`The visual studio code python extension is not installed. Please install it before moving forward.`);
+					}
+					await vscode.commands.executeCommand('ayxWorkspaces.refresh');
+					
+					progress.report({ increment: 100 });
+					const p = new Promise<void>(resolve => {
+						setTimeout(() => {
+							ayxWorkspacesProvider.refresh();
+							resolve();
+						}, 500);
+					});			
+					return p;
+				});
+			})
+		);	
 
 		context.subscriptions.push(
-			vscode.commands.registerCommand('ayxWorkspaces.addEntry', () => vscode.window.showInformationMessage(`Successfully called add entry.`))
+			vscode.commands.registerCommand('ayxWorkspaces.addEntry', async () => {
+				vscode.window.showInformationMessage(`Successfully called add new tool.`);
+				await vscode.window.withProgress({
+					location: vscode.ProgressLocation.Notification,
+					title: "Configurating the python CLI to generate the plugIn",
+					cancellable: true
+				}, async (progress, token) => {
+					token.onCancellationRequested(() => {
+						console.log("User canceled the long running operation");
+					});
+		
+					progress.report({ increment: 20 });
+					const openedTerminal = await this.getPythonTerminal(true);
+					progress.report({ increment: 40 });
+					if(openedTerminal){
+						// Terminal is opened 
+						openedTerminal.show(true);
+						progress.report({ increment: 50 });
+
+						openedTerminal.sendText('ayx_plugin_cli create-ayx-plugin');
+
+						progress.report({ increment: 96 });
+						progress.report({ increment: 99 });
+					}else{
+						vscode.window.showErrorMessage(`The visual studio code python extension is not installed. Please install it before moving forward.`);
+					}
+					await vscode.commands.executeCommand('ayxWorkspaces.refresh');
+					progress.report({ increment: 100 });
+					const p = new Promise<void>(resolve => {
+						setTimeout(() => {
+							ayxWorkspacesProvider.refresh(),
+							resolve();
+						}, 500);
+					});			
+					return p;
+				});		
+			})
 		);
 
 		context.subscriptions.push(
@@ -376,5 +498,39 @@ export class AyxWorkspace {
 			return false;
 		}
 		return true;
+	}
+
+	private async getPythonTerminal (show: boolean = false):  Promise<vscode.Terminal | undefined>{
+		if(this.openedTerminal && this.openedTerminal.exitStatus === undefined){
+			return this.openedTerminal;
+		}
+
+		await vscode.commands.executeCommand('python.setInterpreter');
+		const pythonExtension = vscode.extensions.getExtension("ms-python.python");
+		if(pythonExtension){
+			if(pythonExtension.isActive === false ){
+				await pythonExtension.activate();  
+			}
+			let openedTerminals = vscode.window.terminals.filter(t => t.name === 'Python');
+			this.openedTerminal = openedTerminals.length > 0 ? openedTerminals[openedTerminals.length-1]:undefined;
+			if(!this.openedTerminal){
+				// Open a new python termial
+				await vscode.commands.executeCommand("python.createTerminal");
+				openedTerminals = vscode.window.terminals.filter(t => t.name === 'Python');
+				this.openedTerminal = openedTerminals.length > 0 ? openedTerminals[openedTerminals.length-1]:undefined;
+			}
+			// Terminal is opened, now get the terminal and send cmds
+			if(this.openedTerminal && show){
+				// Termial is opened 
+				this.openedTerminal.show(show);
+			}else{
+				vscode.window.showErrorMessage(`Activating the python extension failled. Please make sure to install and activate it.`);
+			}
+			
+		}else{
+			vscode.window.showErrorMessage(`The visual studio code python extension is not installed. Please install it before moving forward.`);
+		}
+
+		return this.openedTerminal;
 	}
 }
