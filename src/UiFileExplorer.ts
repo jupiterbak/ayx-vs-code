@@ -335,9 +335,7 @@ export class UiFileExplorer {
 	}
 
 	public refresh(ayxTool?:string): void {
-		if(this.treeDataProvider.ayxTool){
-			this.view.title = `UI [typescript project] - ${this.treeDataProvider.ayxTool}`;
-		}
+		this.view.title = `UI [typescript project] - ${this.treeDataProvider.ayxTool}`;
 		this.treeDataProvider.refresh(ayxTool);
 	}
 
@@ -365,7 +363,9 @@ export class UiFileExplorer {
 					}							
 					ayxTerminal.sendText(`cd ${cmdPath.fsPath}`);
 					progress.report({ increment: 20 });
-					ayxTerminal.sendText("npm install");
+					ayxTerminal.sendText("npm run clean:all");
+					progress.report({ increment: 40 });
+					ayxTerminal.sendText("npm install --force");
 					progress.report({ increment: 60 });
 					ayxTerminal.sendText("npm run build");
 					progress.report({ increment: 80 });			

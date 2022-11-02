@@ -335,9 +335,7 @@ export class BackendFileExplorer {
 	}
 
 	public refresh(ayxTool?:string): void {
-		if(this.treeDataProvider.ayxTool){
-			this.view.title = `BACKEND [Python Project] - ${this.treeDataProvider.ayxTool}`;
-		}
+		this.view.title = `BACKEND [Python Project] - ${this.treeDataProvider.ayxTool}`;
 		this.treeDataProvider.refresh(ayxTool);
 	}
 

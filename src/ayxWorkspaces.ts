@@ -365,10 +365,11 @@ export class AyxWorkspace {
 		vscode.commands.registerCommand('ayxWorkspaces.editEntry', (node: AyxTool) => {
 			this.openRootConfigFile();
 		});
-		vscode.commands.registerCommand('ayxWorkspaces.toolSelected', (tool:string) => {
+		vscode.commands.registerCommand('ayxWorkspaces.toolSelected', async (tool:string) => {
 			this.selectedTool = tool;
 			this.toolUiView.refresh(tool);
 			this.toolBackendView.refresh(tool);
+			await vscode.commands.executeCommand('ayxWorkspaces.refresh');
 		});
 		vscode.commands.registerCommand('ayxWorkspaces.debugEntryUI', 
 			(node: AyxToolUI) => {
@@ -389,6 +390,45 @@ export class AyxWorkspace {
 				const rslt = await vscode.commands.executeCommand('python.setInterpreter');
 			})
 		);
+
+		context.subscriptions.push(
+			vscode.commands.registerCommand('ayxWorkspaces.install', async () => {
+				await vscode.window.withProgress({
+					location: vscode.ProgressLocation.Notification,
+					title: "Configurating the python CLI to install the Ayx tools",
+					cancellable: true
+				}, async (progress, token) => {
+					token.onCancellationRequested(() => {
+						console.log("User canceled the long running operation");
+					});
+		
+					progress.report({ increment: 20 });
+					const openedTerminal = await this.getPythonTerminal(true);
+					progress.report({ increment: 40 });
+					if(openedTerminal){
+						// Terminal is opened 
+						openedTerminal.show(true);
+						progress.report({ increment: 50 });
+						openedTerminal.sendText('ayx_plugin_cli designer-install');
+						progress.report({ increment: 96 });
+						progress.report({ increment: 99 });
+					}else{
+						vscode.window.showErrorMessage(`The visual studio code python extension is not installed. Please install it before moving forward.`);
+					}
+					await vscode.commands.executeCommand('ayxWorkspaces.refresh');
+					
+					progress.report({ increment: 100 });
+					const p = new Promise<void>(resolve => {
+						setTimeout(() => {
+							ayxWorkspacesProvider.refresh();
+							resolve();
+						}, 500);
+					});			
+					return p;
+				});
+			})
+		);
+
 		context.subscriptions.push(
 			vscode.commands.registerCommand('ayxWorkspaces.configure', async () => {
 				await vscode.window.withProgress({

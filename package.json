@@ -1,409 +1,426 @@
 {
-  "name": "ayx",
-  "displayName": "ayx-vs-code",
-  "description": "A visual studio code extension for Alteryx bulding block devellopment",
-  "version": "0.0.1",
-  "engines": {
-    "vscode": "^1.71.0"
-  },
-  "categories": [
-    "Other"
-  ],
-  "activationEvents": [
-    "onView:ayxWorkspaces",
-    "onView:UiFileExplorer",
-    "onView:BackendFileExplorer",
-		"onView:testView",
-    "onCommand:ayx.helloWorld",
-    "onCommand:ayxWorkspaces.refresh",
-		"onCommand:ayxWorkspaces.configure",
-    "onCommand:ayxWorkspaces.configurePython",
-    "onCommand:ayxWorkspaces.install",
-		"onCommand:ayxWorkspaces.infoWorkspace",
-		"onCommand:ayxWorkspaces.addEntry",
-		"onCommand:ayxWorkspaces.refreshEntry",
-    "onCommand:ayxWorkspaces.editEntry",
-    "onCommand:ayxWorkspaces.deleteEntry",
-    "onCommand:ayxWorkspaces.debugEntryUI",
-    "onCommand:ayxWorkspaces.debugEntryBackend",
-    "onCommand:ayxWorkspaces.openPythonConsole",
-    "onCommand:testView.reveal",
-    "onCommand:fileExplorer.openFile",
-    "onCommand:fileExplorer.refreshFile",
-    "onCommand:BackendFileExplorer.refreshFile",
-    "onCommand:BackendFileExplorer.openFile"
-  ],
-  "main": "./dist/extension.js",
-  "contributes": {
-    "commands": [
-      {
-        "category": "Alteryx",
-				"command": "ayxWorkspaces.install",
-				"title": "Install PlugIns",
-				"icon": "$(desktop-download)"
-			},
-      {
-        "category": "Alteryx",
-				"command": "ayxWorkspaces.initialize",
-				"title": "Initialize AYX Workspace",
-				"icon": "$(settings-gear)"
-			},
-      {
-        "category": "Alteryx",
-				"command": "ayxWorkspaces.refresh",
-				"title": "Refresh AYX Workspace",
-				"icon": "$(refresh)"
-			},
-      {
-        "category": "Alteryx",
-				"command": "ayxWorkspaces.openPythonConsole",
-				"title": "Open the python console",
-				"icon": "$(console)"
-			},
-      {
-        "category": "Alteryx",
-				"command": "ayxWorkspaces.configurePython",
-				"title": "Set Python Environment",
-        "icon": {
-          "dark": "resources/icons/dark/python.svg",
-          "light": "resources/icons/light/python.svg"
-        }
-			},
-      {
-        "category": "Alteryx",
+	"name": "ayx",
+	"displayName": "ayx-vs-code",
+	"description": "A visual studio code extension for Alteryx bulding block devellopment",
+	"version": "0.0.1",
+	"engines": {
+	   "vscode": "^1.71.0"
+	},
+	"categories": [
+	   "Other"
+	],
+	"activationEvents": [
+	   "onView:ayxWorkspaces",
+	   "onView:UiFileExplorer",
+	   "onView:BackendFileExplorer",
+	   "onView:testView",
+	   "onCommand:ayx.helloWorld",
+	   "onCommand:ayxWorkspaces.refresh",
+	   "onCommand:ayxWorkspaces.configure",
+	   "onCommand:ayxWorkspaces.configurePython",
+	   "onCommand:ayxWorkspaces.install",
+	   "onCommand:ayxWorkspaces.infoWorkspace",
+	   "onCommand:ayxWorkspaces.addEntry",
+	   "onCommand:ayxWorkspaces.refreshEntry",
+	   "onCommand:ayxWorkspaces.editEntry",
+	   "onCommand:ayxWorkspaces.deleteEntry",
+	   "onCommand:ayxWorkspaces.debugEntryUI",
+	   "onCommand:ayxWorkspaces.debugEntryBackend",
+	   "onCommand:ayxWorkspaces.openPythonConsole",
+	   "onCommand:testView.reveal",
+	   "onCommand:fileExplorer.openFile",
+	   "onCommand:fileExplorer.refreshFile",
+	   "onCommand:BackendFileExplorer.refreshFile",
+	   "onCommand:BackendFileExplorer.openFile"
+	],
+	"main": "./dist/extension.js",
+	"contributes": {
+	   "commands": [
+		  {
+			 "category": "Alteryx",
+			 "command": "ayxWorkspaces.install",
+			 "title": "Install PlugIns",
+			 "icon": "$(desktop-download)"
+		  },
+		  {
+			 "category": "Alteryx",
+			 "command": "ayxWorkspaces.initialize",
+			 "title": "Initialize AYX Workspace",
+			 "icon": "$(settings-gear)"
+		  },
+		  {
+			 "category": "Alteryx",
+			 "command": "ayxWorkspaces.refresh",
+			 "title": "Refresh AYX Workspace",
+			 "icon": "$(refresh)"
+		  },
+		  {
+			 "category": "Alteryx",
+			 "command": "ayxWorkspaces.openPythonConsole",
+			 "title": "Open the python console",
+			 "icon": "$(console)"
+		  },
+		  {
+			 "category": "Alteryx",
+			 "command": "ayxWorkspaces.configurePython",
+			 "title": "Set Python Environment",
+			 "icon": {
+				"dark": "resources/icons/dark/python.svg",
+				"light": "resources/icons/light/python.svg"
+			 }
+		  },
+		  {
+			 "category": "Alteryx",
+			 "command": "ayxWorkspaces.configure",
+			 "title": "Configure AYX Workspace",
+			 "icon": "$(gear)"
+		  },
+		  {
+			 "command": "ayxWorkspaces.infoWorkspace",
+			 "title": "Show AYX Workspace Details",
+			 "icon": "$(eye)"
+		  },
+		  {
+			 "command": "ayxWorkspaces.toolSelected",
+			 "title": "AYX Tool Selected",
+			 "icon": "$(tag)"
+		  },
+		  {
+			 "command": "ayxWorkspaces.addEntry",
+			 "title": "Add New AYX Tool to Workspace",
+			 "icon": "$(add)"
+		  },
+		  {
+			 "command": "ayxWorkspaces.refreshEntry",
+			 "title": "Refresh AYX Tool Config",
+			 "icon": "$(refresh)"
+		  },
+		  {
+			 "command": "ayxWorkspaces.editEntry",
+			 "title": "Edit AYX Tool Config",
+			 "icon": "$(edit)"
+		  },
+		  {
+			 "command": "ayxWorkspaces.deleteEntry",
+			 "title": "Delete AYX Tool from workspace",
+			 "icon": "$(trash)"
+		  },
+		  {
+			 "command": "ayxWorkspaces.debugEntryUI",
+			 "title": "View UI for AYX Tool",
+			 "icon": "$(open-preview)"
+		  },
+		  {
+			 "command": "ayxWorkspaces.debugEntryBackend",
+			 "title": "Debug Backend for AYX Tool",
+			 "icon": "$(debug-console)"
+		  },
+		  {
+			 "command": "testView.reveal",
+			 "title": "Reveal"
+		  },
+		  {
+			 "command": "ayxUI.debugEntryUI",
+			 "title": "Debug UI for AYX Tool",
+			 "icon": "$(debug)"
+		  },
+		  {
+			 "command": "ayxBackend.debugEntryBackend",
+			 "title": "Debug UI for AYX Tool",
+			 "icon": "$(debug)"
+		  },
+		  {
+			 "command": "fileExplorer.refreshFile",
+			 "title": "Refresh",
+			 "icon": "$(refresh)"
+		  },
+		  {
+			 "command": "BackendFileExplorer.openFile",
+			 "title": "Open File"
+		  },
+		  {
+			 "command": "fileExplorer.openFile",
+			 "title": "Open File"
+		  },
+		  {
+			 "command": "BackendFileExplorer.refreshFile",
+			 "title": "Refresh",
+			 "icon": "$(refresh)"
+		  }
+	   ],
+	   "viewsContainers": {
+		  "activitybar": [
+			 {
+				"id": "ayx-explorer",
+				"title": "Alteryx",
+				"icon": "resources/media/Alteryx.svg"
+			 }
+		  ]
+	   },
+	   "views": {
+		  "ayx-explorer": [
+			 {
+				"id": "ayxWorkspaces",
+				"name": "Alteryx SDK Workspace",
+				"contextualTitle": "AYX Explorer"
+			 },
+			 {
+				"id": "UiFileExplorer",
+				"name": "UI [typescript project]",
+				"contextualTitle": "UI [typescript project]"
+			 },
+			 {
+				"id": "BackendFileExplorer",
+				"name": "BACKEND [Python Project]",
+				"contextualTitle": "BACKEND [Python Project]"
+			 },
+			 {
+				"id": "testView",
+				"name": "Help & Feedback"
+			 }
+		  ]
+	   },
+	   "menus": {
+		  "view/title": [
+			 {
 				"command": "ayxWorkspaces.configure",
-				"title": "Configure AYX Workspace",
-				"icon": "$(gear)"
-			},
-      {
-				"command": "ayxWorkspaces.infoWorkspace",
-				"title": "Show AYX Workspace Details",
-        "icon": "$(eye)"
-			},
-      {
-				"command": "ayxWorkspaces.toolSelected",
-				"title": "AYX Tool Selected",
-				"icon": "$(tag)"
-			},
-			{
-				"command": "ayxWorkspaces.addEntry",
-				"title": "Add New AYX Tool to Workspace",
-        "icon": "$(add)"
-			},
-      {
-				"command": "ayxWorkspaces.refreshEntry",
-				"title": "Refresh AYX Tool Config",
-				"icon": "$(refresh)"
-			},
-			{
-				"command": "ayxWorkspaces.editEntry",
-				"title": "Edit AYX Tool Config",
-				"icon": "$(edit)"
-			},
-			{
-				"command": "ayxWorkspaces.deleteEntry",
-				"title": "Delete AYX Tool from workspace",
-        "icon": "$(trash)"
-			},
-      {
-				"command": "ayxWorkspaces.debugEntryUI",
-				"title": "View UI for AYX Tool",
-				"icon": "$(open-preview)"
-			},
-      {
-				"command": "ayxWorkspaces.debugEntryBackend",
-				"title": "Debug Backend for AYX Tool",
-				"icon": "$(debug-console)"
-			},
-			{
-				"command": "testView.reveal",
-				"title": "Reveal"
-			},
-      {
+				"when": "view == ayxWorkspaces",
+				"group": "navigation"
+			 },
+			 {
+				"command": "ayxWorkspaces.openPythonConsole",
+				"when": "view == ayxWorkspaces || view == BackendFileExplorer",
+				"group": "navigation"
+			 },
+			 {
+				"command": "ayxWorkspaces.configurePython",
+				"when": "view == ayxWorkspaces",
+				"group": "navigation"
+			 },
+			 {
+				"command": "ayxWorkspaces.refresh",
+				"when": "view == ayxWorkspaces",
+				"group": "navigation"
+			 },
+			 {
+				"command": "ayxWorkspaces.install",
+				"when": "view == ayxWorkspaces",
+				"group": "navigation"
+			 },
+			 {
 				"command": "ayxUI.debugEntryUI",
-				"title": "Debug UI for AYX Tool",
-				"icon": "$(debug)"
-			},
-      {
+				"when": "view == UiFileExplorer",
+				"group": "navigation"
+			 },
+			 {
 				"command": "ayxBackend.debugEntryBackend",
-				"title": "Debug UI for AYX Tool",
-				"icon": "$(debug)"
-			},
-      {
+				"when": "view == BackendFileExplorer",
+				"group": "navigation"
+			 }
+		  ],
+		  "view/item/context": [
+			 {
+				"command": "ayxWorkspaces.infoWorkspace",
+				"when": "view == ayxWorkspaces && viewItem == workspace",
+				"group": "inline"
+			 },
+			 {
+				"command": "ayxWorkspaces.editEntry",
+				"when": "view == ayxWorkspaces && viewItem == tool",
+				"group": "inline"
+			 },
+			 {
+				"command": "ayxWorkspaces.deleteEntry",
+				"when": "view == ayxWorkspaces && viewItem == tool",
+				"group": "inline"
+			 },
+			 {
+				"command": "ayxWorkspaces.debugEntryUI",
+				"when": "view == ayxWorkspaces && viewItem == tool_ui",
+				"group": "inline"
+			 },
+			 {
+				"command": "ayxWorkspaces.debugEntryBackend",
+				"when": "view == ayxWorkspaces && viewItem == tool_backend",
+				"group": "inline"
+			 },
+			 {
+				"command": "ayxWorkspaces.addEntry",
+				"when": "view == ayxWorkspaces && viewItem == workspace",
+				"group": "inline"
+			 },
+			 {
 				"command": "fileExplorer.refreshFile",
-				"title": "Refresh",
-				"icon": "$(refresh)"
-			},
-      {
-				"command": "BackendFileExplorer.openFile",
-				"title": "Open File"
-			},
-      {
-				"command": "fileExplorer.openFile",
-				"title": "Open File"
-			},
-      {
+				"when": "view == UiFileExplorer && viewItem == file",
+				"group": "inline"
+			 },
+			 {
 				"command": "BackendFileExplorer.refreshFile",
-				"title": "Refresh",
-				"icon": "$(refresh)"
-			}
-    ],
-    "viewsContainers": {
-      "activitybar": [
-        {
-          "id": "ayx-explorer",
-          "title": "Alteryx",
-          "icon": "resources/media/Alteryx.svg"
-        }
-      ]
-    },
-    "views": {
-      "ayx-explorer": [
-        {
-          "id": "ayxWorkspaces",
-          "name": "Alteryx SDK Workspace",
-          "contextualTitle": "AYX Explorer"
-        },
-        {
-					"id": "UiFileExplorer",
-					"name": "UI [typescript project]",
-          "contextualTitle": "UI [typescript project]"
-				},
-        {
-					"id": "BackendFileExplorer",
-					"name": "BACKEND [Python Project]",
-          "contextualTitle": "BACKEND [Python Project]"
-				},
-        {
-          "id": "testView",
-          "name": "Help & Feedback"
-        }
-      ]
-    },
-    "menus": {
-			"view/title": [
-        {
-					"command": "ayxWorkspaces.configure",
-					"when": "view == ayxWorkspaces",
-          "group": "navigation"
-				},
-        {
-					"command": "ayxWorkspaces.openPythonConsole",
-					"when": "view == ayxWorkspaces || view == BackendFileExplorer",
-          "group": "navigation"
-				},        
-        {
-					"command": "ayxWorkspaces.configurePython",
-					"when": "view == ayxWorkspaces",
-          "group": "navigation"
-				},
-        {
-					"command": "ayxWorkspaces.refresh",
-					"when": "view == ayxWorkspaces",
-					"group": "navigation"
-				},
-        {
-					"command": "ayxUI.debugEntryUI",
-					"when": "view == UiFileExplorer",
-          "group": "navigation"
-				},
-        {
-					"command": "ayxBackend.debugEntryBackend",
-					"when": "view == BackendFileExplorer",
-          "group": "navigation"
-				}
-			],
-			"view/item/context": [
-        {
-					"command": "ayxWorkspaces.infoWorkspace",
-					"when": "view == ayxWorkspaces && viewItem == workspace",
-          "group": "inline"
-				},
-        {
-					"command": "ayxWorkspaces.editEntry",
-					"when": "view == ayxWorkspaces && viewItem == tool",
-					"group": "inline"
+				"when": "view == BackendFileExplorer && viewItem == file",
+				"group": "inline"
+			 }
+		  ]
+	   },
+	   "viewsWelcome": [
+		  {
+			 "view": "ayxWorkspaces",
+			 "contents": "In order to start the devellopment of new Alteryx tools, you can open a folder containing an Alteryx workspace or create a new workspace.\n[Open Folder](command:vscode.openFolder)\n[Create New Workspace](command:ayxWorkspaces.initialize)\nTo learn more about how to use the Alteryx SDK in VS Code [read our docs](https://help.alteryx.com/developer-help/platform-sdk-quickstart-guide)."
+		  },
+		  {
+			 "view": "UiFileExplorer",
+			 "contents": "Please select a tool in the Alteryx SDK Workspace.\nTo learn more about how to use the Alteryx SDK in VS Code [read our docs](https://help.alteryx.com/developer-help/platform-sdk-quickstart-guide)."
+		  },
+		  {
+			 "view": "BackendFileExplorer",
+			 "contents": "Please select a tool in the Alteryx SDK Workspace.\nTo learn more about how to use the Alteryx SDK in VS Code [read our docs](https://help.alteryx.com/developer-help/platform-sdk-quickstart-guide)."
+		  }
+	   ],
+	   "walkthroughs": [
+		  {
+			 "id": "introduction_walkthrough",
+			 "title": "Getting Started with Alteryx SDK",
+			 "description": "Learn about Alteryx SDK and the Alteryx extension for Visual Studio Code.",
+			 "steps": [
+				{
+				   "id": "setPythonEnvironment",
+				   "title": "First, set the python environment",
+				   "description": "The first step is to select a python environment where all the required python packages will be installed.\n[Run Command](command:ayxWorkspaces.configurePython)",
+				   "media": {
+					  "image": "resources/media/data-science.svg",
+					  "altText": "Empty image"
+				   },
+				   "completionEvents": [
+					  "onCommand:ayxWorkspaces.configurePython"
+				   ]
 				},
 				{
-					"command": "ayxWorkspaces.deleteEntry",
-					"when": "view == ayxWorkspaces && viewItem == tool",
-          "group": "inline"
+				   "id": "initializeTheWorkspace",
+				   "title": "Initialize the AYX Workspace",
+				   "description": "Now, initialize the Alteryx SDK workspace in the selected folder.\nPlease follow the step in the CLI.\n[Initialize](command:ayxWorkspaces.configure)",
+				   "media": {
+					  "image": "resources/media/data-science.svg",
+					  "altText": "Empty image"
+				   },
+				   "completionEvents": [
+					  "onSettingChanged:ayxWorkspaces.configure"
+				   ]
 				},
-        {
-					"command": "ayxWorkspaces.debugEntryUI",
-					"when": "view == ayxWorkspaces && viewItem == tool_ui",
-          "group": "inline"
+				{
+				   "id": "refreshTheWorkspace",
+				   "title": "Refresh the worksapce",
+				   "description": "Refresh the worspace to load the configuration.\n[Initialize](command:ayxWorkspaces.refresh)",
+				   "media": {
+					  "image": "resources/media/data-science.svg",
+					  "altText": "Empty image"
+				   },
+				   "completionEvents": [
+					  "onSettingChanged:ayxWorkspaces.refresh"
+				   ]
 				},
-        {
-					"command": "ayxWorkspaces.debugEntryBackend",
-					"when": "view == ayxWorkspaces && viewItem == tool_backend",
-          "group": "inline"
+				{
+				   "id": "addaPlugIn",
+				   "title": "Add an Alteryx PlugIn to the workspace",
+				   "description": "Add an Alteryx PlugIn to the workspace.\nPlease follow the step in the CLI.\n[Add an Ayx PlugIn](command:ayxWorkspaces.addEntry)",
+				   "media": {
+					  "image": "resources/media/data-science.svg",
+					  "altText": "Empty image"
+				   },
+				   "completionEvents": [
+					  "onContext:ayxWorkspaces.addEntry"
+				   ]
 				},
-        {
-					"command": "ayxWorkspaces.addEntry",
-					"when": "view == ayxWorkspaces && viewItem == workspace",
-          "group": "inline"
+				{
+				   "id": "refreshTheWorkspace",
+				   "title": "Refresh the worksapce",
+				   "description": "Refresh the worspace to load the configuration.\n[Initialize](command:ayxWorkspaces.refresh)",
+				   "media": {
+					  "image": "resources/media/data-science.svg",
+					  "altText": "Empty image"
+				   },
+				   "completionEvents": [
+					  "onSettingChanged:ayxWorkspaces.refresh"
+				   ]
 				},
-        {
-					"command": "fileExplorer.refreshFile",
-					"when": "view == UiFileExplorer && viewItem == file",
-					"group": "inline"
+				{
+				   "id": "debugUI",
+				   "title": "Debug the UI of the selected PlugIn",
+				   "description": "Click here to debug the UI of the Alteryx Plugin.\n[Debug UI](command:ayxUI.debugEntryUI)",
+				   "media": {
+					  "image": "resources/media/data-science.svg",
+					  "altText": "Empty image"
+				   },
+				   "completionEvents": [
+					  "extensionInstalled:ayxUI.debugEntryUI"
+				   ]
 				},
-        {
-					"command": "BackendFileExplorer.refreshFile",
-					"when": "view == BackendFileExplorer && viewItem == file",
-					"group": "inline"
+				{
+				   "id": "debugBackend",
+				   "title": "Debug the Backend of the selected PlugIn",
+				   "description": "Click here to debug the Backend of the Alteryx Plugin.\n[Debug Backend](command:ayxBackend.debugEntryBackend)",
+				   "media": {
+					  "image": "resources/media/data-science.svg",
+					  "altText": "Empty image"
+				   },
+				   "completionEvents": [
+					  "extensionInstalled:ayxBackend.debugEntryBackend"
+				   ]
+				},
+				{
+				   "id": "installTools",
+				   "title": "Compile & Install the ayx plugins.",
+				   "description": "\n[Install](command:ayxWorkspaces.install)",
+				   "media": {
+					  "image": "resources/media/data-science.svg",
+					  "altText": "Empty image"
+				   },
+				   "completionEvents": [
+					  "extensionInstalled:ayxWorkspaces.install"
+				   ]
 				}
-			]
-		},
-    "viewsWelcome": [
-      {
-        "view": "ayxWorkspaces",
-        "contents": "In order to start the devellopment of new Alteryx tools, you can open a folder containing an Alteryx workspace or create a new workspace.\n[Open Folder](command:vscode.openFolder)\n[Create New Workspace](command:ayxWorkspaces.initialize)\nTo learn more about how to use the Alteryx SDK in VS Code [read our docs](https://help.alteryx.com/developer-help/platform-sdk-quickstart-guide)."
-      },
-      {
-        "view": "UiFileExplorer",
-        "contents": "Please select a tool in the Alteryx SDK Workspace.\nTo learn more about how to use the Alteryx SDK in VS Code [read our docs](https://help.alteryx.com/developer-help/platform-sdk-quickstart-guide)."
-      },
-      {
-        "view": "BackendFileExplorer",
-        "contents": "Please select a tool in the Alteryx SDK Workspace.\nTo learn more about how to use the Alteryx SDK in VS Code [read our docs](https://help.alteryx.com/developer-help/platform-sdk-quickstart-guide)."
-      }
-    ],
-    "walkthroughs": [
-			{
-				"id": "introduction_walkthrough",
-				"title": "Getting Started with Alteryx SDK",
-				"description": "Learn about Alteryx SDK and the Alteryx extension for Visual Studio Code.",
-				"steps": [
-					{
-						"id": "setPythonEnvironment",
-						"title": "First, sSet the python environment",
-						"description": "The first step is to select a python environment where all the required python packages will be installed.\n[Run Command](command:ayxWorkspaces.configurePython)",
-						"media": {
-							"image": "resources/media/data-science.svg",
-							"altText": "Empty image"
-						},
-            "completionEvents": [
-							"onCommand:ayxWorkspaces.configurePython"
-						]
-					},
-					{
-						"id": "initializeTheWorkspace",
-						"title": "Initialize the AYX Workspace",
-						"description": "Now, initialize the Alteryx SDK workspace in the selected folder.\nPlease follow the step in the CLI.\n[Initialize](command:ayxWorkspaces.configure)",
-						"media": {
-							"image": "resources/media/data-science.svg",
-							"altText": "Empty image"
-						},
-            "completionEvents": [
-							"onSettingChanged:ayxWorkspaces.configure"
-						]
-					},
-          {
-						"id": "refreshTheWorkspace",
-						"title": "Refresh the worksapce",
-						"description": "Refresh the worspace to load the configuration.\n[Initialize](command:ayxWorkspaces.refresh)",
-						"media": {
-							"image": "resources/media/data-science.svg",
-							"altText": "Empty image"
-						},
-            "completionEvents": [
-							"onSettingChanged:ayxWorkspaces.refresh"
-						]
-					},
-					{
-						"id": "addaPlugIn",
-						"title": "Add an Alteryx PlugIn to the workspace",
-						"description": "Add an Alteryx PlugIn to the workspace.\nPlease follow the step in the CLI.\n[Add an Ayx PlugIn](command:ayxWorkspaces.addEntry)",
-						"media": {
-							"image": "resources/media/data-science.svg",
-							"altText": "Empty image"
-						},
-            "completionEvents": [
-							"onContext:ayxWorkspaces.addEntry"
-						]
-					},
-          {
-						"id": "refreshTheWorkspace",
-						"title": "Refresh the worksapce",
-						"description": "Refresh the worspace to load the configuration.\n[Initialize](command:ayxWorkspaces.refresh)",
-						"media": {
-							"image": "resources/media/data-science.svg",
-							"altText": "Empty image"
-						},
-            "completionEvents": [
-							"onSettingChanged:ayxWorkspaces.refresh"
-						]
-					},
-					{
-						"id": "debugUI",
-						"title": "Debug the UI of the selected PlugIn",
-						"description": "Click here to debug the UI of the Alteryx Plugin.\n[Debug UI](command:ayxUI.debugEntryUI)",
-						"media": {
-							"image": "resources/media/data-science.svg",
-							"altText": "Empty image"
-						},
-						"completionEvents": [
-							"extensionInstalled:ayxUI.debugEntryUI"
-						]
-					},
-					{
-						"id": "debugBackend",
-						"title": "Debug the Backend of the selected PlugIn",
-						"description": "Click here to debug the Backend of the Alteryx Plugin.\n[Debug Backend](command:ayxBackend.debugEntryBackend)",
-						"media": {
-							"image": "resources/media/data-science.svg",
-							"altText": "Empty image"
-						},
-						"completionEvents": [
-							"extensionInstalled:ayxBackend.debugEntryBackend"
-						]
-					}
-				]
-			}
-    ],
-    "configuration": [
-      {
-        "title": "JSON Outline",
-        "properties": {
-          "jsonOutline.autorefresh": {
-            "type": "boolean",
-            "default": false
-          }
-        }
-      }
-    ]
-  },
-  "scripts": {
-    "vscode:prepublish": "npm run package",
-    "compile": "webpack",
-    "watch": "webpack --watch",
-    "package": "webpack --mode production --devtool hidden-source-map",
-    "compile-tests": "tsc -p . --outDir out",
-    "watch-tests": "tsc -p . -w --outDir out",
-    "pretest": "npm run compile-tests && npm run compile && npm run lint",
-    "lint": "eslint src --ext ts",
-    "test": "node ./out/test/runTest.js"
-  },
-  "devDependencies": {
-    "@types/vscode": "^1.71.0",
-    "@types/glob": "^7.2.0",
-    "@types/mocha": "^9.1.1",
-    "@types/node": "16.x",
-    "@typescript-eslint/eslint-plugin": "^5.31.0",
-    "@typescript-eslint/parser": "^5.31.0",
-    "@types/mkdirp": "^0.5.2",
-		"@types/rimraf": "^2.0.2",
-    "eslint": "^8.20.0",
-    "glob": "^8.0.3",
-    "mocha": "^10.0.0",
-    "typescript": "^4.7.4",
-    "ts-loader": "^9.3.1",
-    "webpack": "^5.74.0",
-    "webpack-cli": "^4.10.0",
-    "@vscode/test-electron": "^2.1.5",
-		"mkdirp": "^0.5.1",
-		"rimraf": "^2.6.2"
-  }
+			 ]
+		  }
+	   ],
+	   "configuration": [
+		  {
+			 "title": "JSON Outline",
+			 "properties": {
+				"jsonOutline.autorefresh": {
+				   "type": "boolean",
+				   "default": false
+				}
+			 }
+		  }
+	   ]
+	},
+	"scripts": {
+	   "vscode:prepublish": "npm run package",
+	   "compile": "webpack",
+	   "watch": "webpack --watch",
+	   "package": "webpack --mode production --devtool hidden-source-map",
+	   "compile-tests": "tsc -p . --outDir out",
+	   "watch-tests": "tsc -p . -w --outDir out",
+	   "pretest": "npm run compile-tests && npm run compile && npm run lint",
+	   "lint": "eslint src --ext ts",
+	   "test": "node ./out/test/runTest.js"
+	},
+	"devDependencies": {
+	   "@types/vscode": "^1.71.0",
+	   "@types/glob": "^7.2.0",
+	   "@types/mocha": "^9.1.1",
+	   "@types/node": "16.x",
+	   "@typescript-eslint/eslint-plugin": "^5.31.0",
+	   "@typescript-eslint/parser": "^5.31.0",
+	   "@types/mkdirp": "^0.5.2",
+	   "@types/rimraf": "^2.0.2",
+	   "eslint": "^8.20.0",
+	   "glob": "^8.0.3",
+	   "mocha": "^10.0.0",
+	   "typescript": "^4.7.4",
+	   "ts-loader": "^9.3.1",
+	   "webpack": "^5.74.0",
+	   "webpack-cli": "^4.10.0",
+	   "@vscode/test-electron": "^2.1.5",
+	   "mkdirp": "^0.5.1",
+	   "rimraf": "^2.6.2"
+	}
 }
