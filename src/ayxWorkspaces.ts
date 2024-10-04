@@ -332,7 +332,7 @@ export class AyxWorkspace {
 					progress.report({ increment: 50 });
 					openedTerminal.sendText('pip install ayx-plugin-cli');
 					progress.report({ increment: 70 });
-					openedTerminal.sendText('pip install ayx-python-sdk');
+					openedTerminal.sendText('pip install ayx_python_sdk');
 					progress.report({ increment: 80 });
 					openedTerminal.sendText('ayx_plugin_cli sdk-workspace-init');
 					progress.report({ increment: 96 });
@@ -449,7 +449,7 @@ export class AyxWorkspace {
 						progress.report({ increment: 50 });
 						openedTerminal.sendText('pip install ayx-plugin-cli');
 						progress.report({ increment: 70 });
-						openedTerminal.sendText('pip install ayx-python-sdk');
+						openedTerminal.sendText('pip install ayx_python_sdk');
 						progress.report({ increment: 80 });
 						openedTerminal.sendText('ayx_plugin_cli sdk-workspace-init');
 						progress.report({ increment: 96 });
