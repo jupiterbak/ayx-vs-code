@@ -1,6 +1,6 @@
 # Alteryx Tool Developer Extension
 
-A Visual Studio Code/ Ciursor extension designed to streamline the development process for creating custom tools in Alteryx Designer using Alteryx SDKs.
+A Visual Studio Code/ Cursor extension designed to streamline the development process for creating custom tools in Alteryx Designer using Alteryx SDKs.
 
 ## Features
 
